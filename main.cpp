@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 
@@ -155,3 +156,6 @@ int main() {
 
     return 0;
 }
+
+
+

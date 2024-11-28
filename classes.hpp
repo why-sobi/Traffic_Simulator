@@ -1,3 +1,6 @@
+#ifndef CLASSES_HPP
+#define CLASSES_HPP
+
 #include <iostream>
 
 using namespace std;
@@ -9,7 +12,7 @@ struct Edge
 {
     string name;
     int Weight;
-    Edge(string name = "", int w = -1) : Weight(w), name(name) {}
+    explicit Edge(string name = "", const int w = -1) : name(std::move(name)), Weight(w) {}
 };
 
 class Car
@@ -21,7 +24,7 @@ class Car
 
 public:
     Car(int P = 0) : priority(P) {}
-    Car(std::string Plate, int X, int Y, int V, int P = 0) : plate(Plate), priority(P), x(X), y(Y), velocity(V) {}
+    Car(std::string Plate, int X, int Y, int V, int P = 0) : plate(std::move(Plate)), x(X), y(Y), velocity(V), priority(P) {}
 
     // Getters
     int getX() const { return x; }
@@ -34,20 +37,20 @@ public:
     void setX(int X) { x = X; }
     void setY(int Y) { y = Y; }
     void setVelocity(int V) { velocity = V; }
-    void setPlate(std::string Plate) { plate = Plate; }
+    void setPlate(const std::string& Plate) { plate = Plate; }
 
     // Operator overload
-    bool operator>(const Car& obj)
+    bool operator>(const Car& obj) const
     {
         return this->priority > obj.priority;
     }
 
-    bool operator<(const Car& obj)
+    bool operator<(const Car& obj) const
     {
         return this->priority < obj.priority;
     }
 
-    bool operator==(const Car& obj)
+    bool operator==(const Car& obj) const
     {
         return this->priority == obj.priority;
     }
@@ -80,19 +83,19 @@ public:
 
     void insert(const Edge& obj, int val)
     {
-        int key = hashFunc(obj.name);
+        const int key = hashFunc(obj.name);
         arr[key] = val;
     }
 
     int& operator[](const Edge& obj)
     {
-        int key = hashFunc(obj.name);
+        const int key = hashFunc(obj.name);
         return arr[key];
     }
 
     void reset(const Edge& obj)
     {
-        int key = hashFunc(obj.name);
+        const int key = hashFunc(obj.name);
         arr[key] = 0;
     }
 };
@@ -109,7 +112,7 @@ public:
     }
 
     // Add a weighted edge to the graph
-    void addEdge(int i, int j, Edge road_name)
+    void addEdge(int i, int j, const Edge& road_name)
     {
         if (i < 0 || j < 0 || i >= size || j >= size)
         {
@@ -146,7 +149,7 @@ public:
         cout << "Edge removed from " << i << " to " << j << ".\n";
     }
 
-    void displayMatrix()
+    void displayMatrix() const
     {
         for (int i = 0; i < size; ++i)
         {
@@ -359,7 +362,7 @@ public:
     {
         this->heap = new T[capacity];
     }
-    ~Heap()
+    virtual ~Heap()
     {
         if (heap)
         {
@@ -572,3 +575,6 @@ class MaxHeap : public Heap<T>
             arr[i] = temp.pop();
     }
 };
+
+
+#endif //CLASSES_HPP
