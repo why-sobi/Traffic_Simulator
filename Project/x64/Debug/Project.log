@@ -1,9 +1,8 @@
 ﻿  main.cpp
-C:\Users\shadows box\Documents\SEM3\Data-Structures\Project\Project\main.cpp(5,12): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\shadows box\Documents\SEM3\Data-Structures\Project\Project\main.cpp(71,26): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
-C:\Users\shadows box\Documents\SEM3\Data-Structures\Project\Project\main.cpp(71,26): warning C4244:         with
-C:\Users\shadows box\Documents\SEM3\Data-Structures\Project\Project\main.cpp(71,26): warning C4244:         [
-C:\Users\shadows box\Documents\SEM3\Data-Structures\Project\Project\main.cpp(71,26): warning C4244:             T=float
-C:\Users\shadows box\Documents\SEM3\Data-Structures\Project\Project\main.cpp(71,26): warning C4244:         ]
-C:\Users\shadows box\Documents\SEM3\Data-Structures\Project\Project\main.cpp(76,72): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-  Project.vcxproj -> C:\Users\shadows box\Documents\SEM3\Data-Structures\Project\Project\x64\Debug\Project.exe
+F:\coding\Sem 3\DS Project\Traffic_Simulator\classes.hpp(314,39): warning C4305: 'initializing': truncation from 'double' to 'float'
+  (compiling source file 'main.cpp')
+  
+F:\coding\Sem 3\DS Project\Traffic_Simulator\classes.hpp(319,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  (compiling source file 'main.cpp')
+  
+  Project.vcxproj -> F:\coding\Sem 3\DS Project\Traffic_Simulator\x64\Debug\Project.exe

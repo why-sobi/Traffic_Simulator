@@ -41,24 +41,24 @@ void testMap() {
 }
 
 // Function to stress test Graph class
-void testGraph() {
-    cout << "Testing Graph Class..." << endl;
-    Graph graph;
-
-    Edge road1("Highway 1", 5);
-    Edge road2("Highway 2", 10);
-
-    graph.addEdge(0, 1, road1);
-    graph.addEdge(1, 2, road2);
-    graph.addEdge(2, 0, Edge("Highway 3", 15)); // Adding another edge
-
-    cout << "Graph Adjacency Matrix:" << endl;
-    graph.displayMatrix();
-
-    graph.removeEdge(1, 2);
-    cout << "Graph Adjacency Matrix after removing edge (1, 2):" << endl;
-    graph.displayMatrix();
-}
+//void testGraph() {
+//    cout << "Testing Graph Class..." << endl;
+//    Graph graph;
+//
+//    Edge road1("Highway 1", 5);
+//    Edge road2("Highway 2", 10);
+//
+//    graph.addEdge(0, 1, road1);
+//    graph.addEdge(1, 2, road2);
+//    graph.addEdge(2, 0, Edge("Highway 3", 15)); // Adding another edge
+//
+//    cout << "Graph Adjacency Matrix:" << endl;
+//    graph.displayMatrix();
+//
+//    graph.removeEdge(1, 2);
+//    cout << "Graph Adjacency Matrix after removing edge (1, 2):" << endl;
+//    graph.displayMatrix();
+//}
 
 // Function to stress test Stack class
 void testStack() {
@@ -131,28 +131,11 @@ void testMaxHeap() {
     maxHeap.print();
 }
 
-// Main function to run all tests
 int main() {
-    testCar();
-    cout << endl;
+    Graph g;
 
-    testMap();
-    cout << endl;
-
-    testGraph();
-    cout << endl;
-
-    testStack();
-    cout << endl;
-
-    testQueue();
-    cout << endl;
-
-    testMinHeap();
-    cout << endl;
-
-    testMaxHeap();
-    cout << endl;
+    g.loadFromCSV("csv/road_network.csv");
+    g.displayGraph();
 
     return 0;
 }

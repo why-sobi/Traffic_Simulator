@@ -2,11 +2,259 @@
 #define CLASSES_HPP
 
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
-#define BUCKETS 53
-#define vertices 26
+const int BUCKETS = 53;
+const int vertices = 26;
+
+template <typename T>
+class LinkedList
+{
+
+public:
+    struct Node
+    {
+
+        T data;
+        Node* next;
+
+        Node(T value) : data(value), next(nullptr) {}
+    };
+
+private:
+    Node* head;
+    int size;
+
+public:
+    LinkedList() : head(nullptr), size(0) {}
+
+    ~LinkedList()
+    {
+
+        while (size > 0)
+        {
+
+            removeAtStart();
+        }
+    }
+
+    Node* getHead() const
+    {
+        return head;
+    }
+
+    Node* getNode(int index) const
+    {
+
+        if (index < 0 || index >= size)
+        {
+
+            std::cout << "Index out of range!" << '\n';
+            return nullptr;
+        }
+
+        Node* current = head;
+
+        for (int i = 0; i < index; i++)
+        {
+
+            current = current->next;
+        }
+
+        return current;
+    }
+    void insertAtStart(T value)
+    {
+
+        Node* newNode = new Node(value);
+        newNode->next = head;
+        head = newNode;
+        size++;
+    }
+
+    void insertAtEnd(T value)
+    {
+
+        Node* newNode = new Node(value);
+
+        if (isEmpty())
+        {
+
+            head = newNode;
+        }
+
+        else
+        {
+
+            Node* tail = getNode(size - 1);
+
+            if (tail)
+            {
+
+                tail->next = newNode;
+            }
+        }
+
+        size++;
+    }
+
+    void insertAtIndex(int index, T value)
+    {
+
+        if (index < 0 || index > size)
+        {
+
+            std::cout << "Index out of range!" << '\n';
+            return;
+        }
+
+        if (index == 0)
+        {
+
+            insertAtStart(value);
+        }
+
+        else if (index == size)
+        {
+
+            insertAtEnd(value);
+        }
+
+        else
+        {
+
+            Node* prev = getNode(index - 1);
+
+            if (prev)
+            {
+
+                Node* newNode = new Node(value);
+                newNode->next = prev->next;
+                prev->next = newNode;
+                size++;
+            }
+        }
+    }
+
+    void removeAtStart()
+    {
+
+        if (isEmpty())
+        {
+
+            std::cout << "List is empty!" << '\n';
+            return;
+        }
+
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        temp = nullptr;
+        size--;
+    }
+
+    void removeAtEnd()
+    {
+
+        if (isEmpty())
+        {
+
+            std::cout << "List is empty!" << '\n';
+            return;
+        }
+
+        if (size == 1)
+        {
+
+            removeAtStart();
+            return;
+        }
+
+        Node* prev = getNode(size - 2);
+
+        if (prev)
+        {
+
+            delete prev->next;
+            prev->next = nullptr;
+            size--;
+        }
+    }
+
+    void removeAtIndex(int index)
+    {
+
+        if (index < 0 || index >= size)
+        {
+
+            std::cout << "Index out of range!" << '\n';
+            return;
+        }
+
+        if (index == 0)
+        {
+
+            removeAtStart();
+        }
+
+        else
+        {
+
+            Node* prev = getNode(index - 1);
+
+            if (prev && prev->next)
+            {
+
+                Node* temp = prev->next;
+                prev->next = temp->next;
+                delete temp;
+                size--;
+            }
+        }
+    }
+
+    bool isEmpty() const
+    {
+
+        return size == 0;
+    }
+
+    void display() const
+    {
+
+        if (isEmpty())
+        {
+
+            std::cout << "List is empty!" << '\n';
+            return;
+        }
+
+        Node* current = head;
+
+        while (current)
+        {
+
+            std::cout << current->data << " -> ";
+            current = current->next;
+        }
+
+        std::cout << "nullptr" << '\n';
+    }
+
+    int getSize() const
+    {
+
+        return size;
+    }
+    Node* return_Head()
+    {
+        return head;
+    }
+};
 
 struct Edge
 {
@@ -100,79 +348,84 @@ public:
     }
 };
 
+struct GraphNode
+{
+    string targetIntersection;
+    int travelTime; // weight
+    GraphNode(string target, int time) : targetIntersection(target), travelTime(time)
+    {}
+
+    friend ostream& operator << (ostream& out, GraphNode& obj)
+    {
+        out << obj.targetIntersection;
+        out << obj.travelTime;
+        return out;
+    }
+};
+
+// Graph Class to manage intersections and roads
 class Graph
 {
-    Edge adjacencyMatrix[vertices][vertices];
-    int size;
+private:
+    LinkedList<GraphNode> adjacencyList[vertices];
+    int vertexCount;
 
 public:
     Graph()
     {
-        size = vertices;
+        vertexCount = vertices;
     }
 
-    // Add a weighted edge to the graph
-    void addEdge(int i, int j, const Edge& road_name)
+    // Add an edge (road) between two intersections
+    void addEdge(char from, const string &to, int travelTime)
     {
-        if (i < 0 || j < 0 || i >= size || j >= size)
+        int fromIndex = from - 'A';  // Convert character to index (A=0, B=1, ..., Z=25)
+        if (fromIndex < 0 || fromIndex >= vertexCount)
         {
-            cout << "Invalid vertex indices. Cannot add edge.\n";
+            cout << "Invalid intersection!" << endl;
             return;
         }
-        if (road_name.Weight <= 0)
-        {
-            cout << "Invalid weight. Weight must be positive.\n";
-            return;
-        }
-
-        adjacencyMatrix[i][j] = road_name; // Directed edge
-        cout << "Edge added from " << i << " to " << j << " with weight " << road_name.Weight << ".\n";
+        GraphNode newNode(to, travelTime);
+        adjacencyList[fromIndex].insertAtEnd(newNode);
     }
 
-    // Remove edge from the graph
-    void removeEdge(int i, int j)
+    void displayGraph()
     {
-        if (i < 0 || j < 0 || i >= size || j >= size)
+        for (int i = 0; i < vertexCount; i++)
         {
-            cout << "Invalid vertex indices. Cannot remove edge.\n";
-            return;
-        }
-
-        if (adjacencyMatrix[i][j].Weight == -1)
-        {
-            cout << "No edge exists from " << i << " to " << j << " to remove.\n";
-            return;
-        }
-
-        adjacencyMatrix[i][j].Weight = -1;
-        adjacencyMatrix[i][j].name = "";
-        cout << "Edge removed from " << i << " to " << j << ".\n";
-    }
-
-    void displayMatrix() const
-    {
-        for (int i = 0; i < size; ++i)
-        {
-            for (int j = 0; j < size; ++j)
-            {
-                if (adjacencyMatrix[i][j].Weight == -1)
-                    cout << "   ";
-                else
-                    cout << adjacencyMatrix[i][j].name << " ";
-            }
-            cout << endl;
+            char intersection = 'A' + i;
+            cout << "Intersection " << intersection << " has roads to: "<<endl;
+            adjacencyList[i].display();
         }
     }
 
-    // Check if an edge exists
-    bool isEdge(int i, int j) const
+    // Load graph from a CSV file
+    void loadFromCSV(const string &filename)
     {
-        if (i < 0 || j < 0 || i >= size || j >= size)
+        ifstream file(filename);
+        if (!file.is_open())
         {
-            cout << "Invalid vertex indices. Cannot check edge.\n";
-            return false;
+            cout << "Error opening file!" << endl;
+            return;
         }
-        return adjacencyMatrix[i][j].Weight != -1;
+
+        string line;
+        getline(file, line);
+
+        while (getline(file, line))
+        {
+            stringstream ss(line);
+            string intersection1, intersection2;
+            int travelTime;
+            getline(ss, intersection1, ',');
+            getline(ss, intersection2, ',');
+            ss >> travelTime;
+
+            // Add the edge to the graph
+            addEdge(intersection1[0], intersection2, travelTime);
+        }
+
+        file.close();
     }
 };
 
@@ -184,7 +437,6 @@ public:
     StackNode* next;
     StackNode(T d) : data(d), next(nullptr) {}
 };
-
 template <typename T>
 class Stack
 {
@@ -575,6 +827,4 @@ class MaxHeap : public Heap<T>
             arr[i] = temp.pop();
     }
 };
-
-
 #endif //CLASSES_HPP

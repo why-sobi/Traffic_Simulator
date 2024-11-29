@@ -23,5 +23,19 @@
     <ClInclude Include="hash.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Module1.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="classes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="csv\emergency_vehicles.csv">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="csv\road_network.csv">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
