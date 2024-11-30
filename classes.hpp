@@ -12,6 +12,154 @@ const int BUCKETS = 53;
 const int vertices = 26;
 
 template <typename T>
+class DynamicArr
+{
+    T* arr = nullptr;
+    int size = 0;
+    int pos = 0;
+
+    // private methods
+    void allocateDouble()
+    {
+        T* temp = new T[size * 2];
+        for (int i = 0; i < size; i++)
+        {
+            temp[i] = arr[i];
+        }
+        delete[] arr;
+        size *= 2;
+        arr = temp;
+    }
+
+public:
+    // Constructor
+    DynamicArr() : size(0), pos(0), arr(nullptr) {}
+    DynamicArr(int s) : size(s), pos(0), arr(new T[s]) {}
+    DynamicArr(const DynamicArr<T>& obj)
+    {
+        if (!obj.arr)
+            return;
+        if (this->arr)
+        {
+            this->~DynamicArr();
+        }
+        if (!this->arr)
+        {
+            this->arr = new T[obj.size];
+        }
+
+        this->size = obj.size;
+        this->pos = obj.pos;
+
+        for (int i = 0; i < obj.pos; i++)
+        {
+            this->arr[i] = obj.arr[i];
+        }
+    }
+
+    // Destructor
+    ~DynamicArr()
+    {
+        if (arr)
+        {
+            delete[] arr;
+            arr = nullptr;
+        }
+    }
+
+    // Methods
+    void push(T val)
+    {
+        if (!arr)
+        {
+            arr = new T[1];
+            size = 1;
+        }
+        arr[pos++] = val;
+        if (pos == size)
+        {
+            allocateDouble();
+        }
+    }
+
+    T pop()
+    {
+        if (arr)
+        {
+            T val = arr[--pos];
+            return val;
+        }
+        throw std::runtime_error("Cannot pop empty array");
+    }
+
+    bool isEmpty() const
+    {
+        return pos == 0;
+    }
+
+    void clear()
+    {
+        delete[] arr;
+        arr = nullptr;
+        size = 0;
+        pos = 0;
+    }
+
+    void shrinkToFit()
+    {
+        if (size == 0 || pos == 0 || pos == size)
+            return;
+        T* newArr = new T[pos];
+
+        for (int i = 0; i < pos; i++)
+        {
+            newArr[i] = arr[i];
+        }
+
+        delete[] arr;
+        arr = newArr;
+        size = pos;
+    }
+
+    // Getters
+    int getSize() const
+    {
+        return pos;
+    }
+
+    int getAllocated() const
+    {
+        return size;
+    }
+
+    // overloading operators
+    void operator=(const DynamicArr<T>& obj)
+    {
+        if (this->arr)
+        {
+            this->~DynamicArr();
+        }
+        this->arr = new T[obj.size];
+
+        this->size = obj.size;
+        this->pos = obj.pos;
+
+        for (int i = 0; i < obj.pos; i++)
+        {
+            this->arr[i] = obj.arr[i];
+        }
+    }
+    T& operator[](int index)
+    {
+        if (index >= 0 && index < size)
+        {
+            return arr[index];
+        }
+        throw std::out_of_range("Index out of range");
+    }
+};
+
+template <typename T>
 class LinkedList
 {
 

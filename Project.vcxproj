@@ -135,7 +135,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="classes.hpp" />
+    <ClInclude Include="functions.h" />
     <ClInclude Include="hash.hpp" />
+    <ClInclude Include="module4.hpp" />
     <ClInclude Include="Module1.hpp" />
   </ItemGroup>
   <ItemGroup>
