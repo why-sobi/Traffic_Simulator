@@ -135,7 +135,7 @@ int main() {
     Graph g;
 
     g.loadFromCSV("csv/road_network.csv");
-    g.displayGraph();
+    // g.displayGraph();
     Stack<char> stack;
     dijkstra('A','G',stack,g);
     stack.display();

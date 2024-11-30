@@ -8,7 +8,7 @@
 #include <fstream>
 #include <iostream>
 
-using namesapce std;
+using namespace std;
 
 // Prototypes
 int dijkstra(int source, int target, Graph &graph, bool = true);
@@ -20,14 +20,14 @@ void dijkstra(char source, char target, Stack<char>& path, Graph &graph, bool = 
     MinHeap<GraphNode> pq;  // Priority queue for Dijkstra
     const int n = vertices;
     bool visited[n];
-    Map dist(vertices, INT_MAX);
+    Map dist(n, INT_MAX);
     Char_Map predecessor;  // Map to track predecessors
-
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         visited[i] = false;  // Initialize all vertices as unvisited
     }
 
-    dist[to_string(source)] = 0;  // Distance to the source is 0
+    dist.insert(to_string(source),0);  // Distance to the source is 0
     GraphNode source_node(source, 0);
     pq.insert(source_node);  // Push the source into the priority queue
 
@@ -36,22 +36,22 @@ void dijkstra(char source, char target, Stack<char>& path, Graph &graph, bool = 
         int d = pq.peek().travelTime;  // Current distance
         pq.pop();
 
-        if (visited[u]) continue;  // If already visited, skip
+        if (visited[u-'A']) continue;  // If already visited, skip
 
-        visited[u] = true;  // Mark as visited
+        visited[u-'A'] = true;  // Mark as visited
 
         if (u == target) break;  // If we reached the target, stop
 
         // Process all neighbors of u using a simple for loop
-        for (int i = 0; i < graph.adjacencyList[u].getSize(); ++i) {
-            LinkedList<GraphNode>::Node* temp = graph.adjacencyList[u].getNode(i);
+        for (int i = 0; i < graph.adjacencyList[u-'A'].getSize(); ++i) {
+            LinkedList<GraphNode>::Node* temp = graph.adjacencyList[u-'A'].getNode(i);
             while (temp != nullptr)
             {
                 char v = temp->data.targetIntersection;  // Neighbor vertex
                 int weight_uv = temp->data.travelTime;  // Weight of edge u -> v
 
                 // Update distance if a shorter path is found
-                if (!visited[v] && dist[to_string(u)] + weight_uv < dist[to_string(v)]) {
+                if (!visited[v-'A'] && dist[to_string(u)] + weight_uv < dist[to_string(v)]) {
                     dist[to_string(v)] = dist[to_string(u)] + weight_uv;
                     predecessor.insert(v, u);  // Set predecessor for path reconstruction
                     GraphNode temp_node(v, dist[to_string(v)]);
@@ -61,7 +61,6 @@ void dijkstra(char source, char target, Stack<char>& path, Graph &graph, bool = 
             }
         }
     }
-
     // Reconstruct the path from target to source using predecessors
     char current = target;
     while (current != source)

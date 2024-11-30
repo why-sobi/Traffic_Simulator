@@ -97,7 +97,6 @@ public:
     }
 };
 
-
 template <typename T>
 class StackNode
 {
@@ -156,7 +155,7 @@ public:
     void removeAll()
     {
         StackNode<T>* temp = top;
-        while (top)
+        while (temp)
         {
             StackNode<T>* next = temp->next;
             delete temp;
@@ -636,7 +635,7 @@ class Map
             hash += c;
         hash *= KnuthConstant;
         hash = int(BUCKETS * (hash - int(hash)));
-        return int(hash);
+        return int(hash)%size;
     }
 
 public:
@@ -673,51 +672,66 @@ public:
     }
 };
 
-class Char_Map
-{
-    char *current;
+class Char_Map {
+    char* current;
     char* parent;
     int size;
-    // private functions
-    int hashFunc(char name)
-    {
-        name = toupper(name);
-        return name - 'A';
+
+    // Private hash function for a single character
+    int hashFunc(char first) {
+        first = toupper(first);
+        return (first - 'A') % size;
     }
 
 public:
-    Char_Map(int s = vertices,char default_value = '\0'): size(s)
-    {
+    // Constructor with size parameter
+    Char_Map(int s = 41, char default_value = '\0') : size(s) {
         current = new char[size];
         parent = new char[size];
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; ++i) {
             current[i] = default_value;
             parent[i] = default_value;
         }
     }
-    ~Char_Map()
-    {
-        if(current && parent)
-        {
-            delete[] current;
-            delete[] parent;
-        }
-        current = nullptr;
-        parent = nullptr;
-    }
-    void insert(char& c, char& p)
-    {
-        const int key = hashFunc(c);
-        current[key] = c;
-        parent[key] = p;
+
+    // Destructor to clean up memory
+    ~Char_Map() {
+        delete[] current;
+        delete[] parent;
     }
 
-    char& operator[](char current)
+    // Insert character-parent pair
+    void insert(char c, char p) {
+        int key = hashFunc(c);
+        // Handle collision resolution with linear probing
+        for (int i = 0; i < size; ++i) {
+            int probe_index = (key + i) % size;
+            if (current[probe_index] == '\0')
+            {
+                current[probe_index] = c;
+                parent[probe_index] = p;
+                return;
+            }
+        }
+    }
+    // Overloaded operator[] to access parent directly
+    void display() const {
+        cout << "debugging\n";
+        for (int i = 0; i < size; ++i) {
+                std::cout << "Current: " << current[i] << ", Parent: " << parent[i] << std::endl;
+        }
+    }
+    char& operator[](char c)
     {
-        // returns the parent of the current index
-        const int key = hashFunc(current);
-        return parent[key];
+        int key = hashFunc(c);
+        for (int i = 0; i < size; ++i)
+        {
+            int probe_index = (key + i) % size;
+            if (current[probe_index] == c)
+            {
+                return parent[probe_index];
+            }
+        }
     }
 };
 
@@ -779,7 +793,7 @@ public:
         carCount.insert(roadName, 0);
         
         GraphNode newNode(to, travelTime);
-        adjacencyList[fromIndex].insertAtEnd(newNode);
+        adjacencyList[fromIndex].insertAtStart(newNode);
     }
 
     void displayGraph()
@@ -814,7 +828,7 @@ public:
             getline(ss, intersection2, ',');
             ss >> travelTime;
             // Add the edge to the graph
-            addEdge(intersection1[0], intersection2[2], travelTime);
+            addEdge(intersection1[0], intersection2[0], travelTime);
         }
 
         file.close();
