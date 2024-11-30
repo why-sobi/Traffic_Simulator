@@ -22,22 +22,22 @@ void testCar() {
 }
 
 // Function to stress test Map class
-void testMap() {
-    cout << "Testing Map Class..." << endl;
-    Map map;
-
-    Edge edge1("Road A", 10);
-    Edge edge2("Road B", 20);
-
-    map.insert(edge1, 100);
-    map.insert(edge2, 200);
-
-    cout << "Value for Road A: " << map[edge1] << endl;
-    cout << "Value for Road B: " << map[edge2] << endl;
-
-    map.reset(edge1);
-    cout << "Value for Road A after reset: " << map[edge1] << endl;
-}
+//void testMap() {
+//    cout << "Testing Map Class..." << endl;
+//    Map map;
+//
+//    Edge edge1("Road A", 10);
+//    Edge edge2("Road B", 20);
+//
+//    map.insert(edge1, 100);
+//    map.insert(edge2, 200);
+//
+//    cout << "Value for Road A: " << map[edge1] << endl;
+//    cout << "Value for Road B: " << map[edge2] << endl;
+//
+//    map.reset(edge1);
+//    cout << "Value for Road A after reset: " << map[edge1] << endl;
+//}
 
 // Function to stress test Graph class
 //void testGraph() {

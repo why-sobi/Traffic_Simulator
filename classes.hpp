@@ -454,7 +454,7 @@ public:
 };
 
 class Map
-{
+{ 
     int arr[BUCKETS];
 
     // private functions
@@ -478,21 +478,21 @@ public:
         }
     }
 
-    void insert(const Edge& obj, int val)
+    void insert(std::string name, int val)
     {
-        const int key = hashFunc(obj.name);
+        const int key = hashFunc(name);
         arr[key] = val;
     }
 
-    int& operator[](const Edge& obj)
+    int& operator[](std::string name)
     {
-        const int key = hashFunc(obj.name);
+        const int key = hashFunc(name);
         return arr[key];
     }
 
-    void reset(const Edge& obj)
+    void reset(std::string name)
     {
-        const int key = hashFunc(obj.name);
+        const int key = hashFunc(name);
         arr[key] = 0;
     }
 };
@@ -515,6 +515,7 @@ struct GraphNode
 // Graph Class to manage intersections and roads
 class Graph
 {
+    Map carCount;
 public:
 
     LinkedList<GraphNode> adjacencyList[vertices];
@@ -534,6 +535,10 @@ public:
             cout << "Invalid intersection!" << endl;
             return;
         }
+        
+        std::string roadName = from + to;
+        carCount.insert(roadName, 0);
+        
         GraphNode newNode(to, travelTime);
         adjacencyList[fromIndex].insertAtEnd(newNode);
     }
@@ -575,6 +580,7 @@ public:
         }
 
         file.close();
+        
     }
 };
 

@@ -1,8 +1,8 @@
 ﻿  main.cpp
-C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(314,39): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(463,39): warning C4305: 'initializing': truncation from 'double' to 'float'
   (compiling source file 'main.cpp')
   
-C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(319,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(468,19): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
   (compiling source file 'main.cpp')
   
   Project.vcxproj -> C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\x64\Debug\Project.exe
