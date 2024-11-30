@@ -411,6 +411,7 @@ struct Edge
     explicit Edge(string name = "", const int w = -1) : name(std::move(name)), Weight(w) {}
 };
 
+
 class Car
 {
     std::string plate;
@@ -514,11 +515,11 @@ struct GraphNode
 // Graph Class to manage intersections and roads
 class Graph
 {
-private:
+public:
+
     LinkedList<GraphNode> adjacencyList[vertices];
     int vertexCount;
 
-public:
     Graph()
     {
         vertexCount = vertices;
