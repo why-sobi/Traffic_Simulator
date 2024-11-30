@@ -161,7 +161,6 @@ public:
             delete temp;
             temp = next;
         }
-        temp = nullptr;
     }
     void display()
     {
