@@ -12,6 +12,177 @@ const int BUCKETS = 53;
 const int vertices = 26;
 
 template <typename T>
+class QueueNode
+{
+public:
+    T data;
+    QueueNode* next;
+
+    QueueNode(T d) : data(d), next(nullptr) {}
+};
+
+template <typename T>
+class Queue
+{
+private:
+    QueueNode<T>* front;
+    QueueNode<T>* rear;
+
+public:
+    Queue() : front(nullptr), rear(nullptr) {}
+
+    ~Queue()
+    {
+        while (front)
+        {
+            dequeue();
+        }
+    }
+
+    void enqueue(T x)
+    {
+        QueueNode<T>* newNode = new QueueNode<T>(x);
+        if (!rear)
+        {
+            front = rear = newNode;
+        }
+        else
+        {
+            rear->next = newNode;
+            rear = newNode;
+        }
+    }
+
+    T peek() {
+        if (front == nullptr) {
+            throw std::runtime_error("Queue is empty");
+        }
+        return front->data;
+    }
+
+    void dequeue()
+    {
+        if (!front)
+        {
+            cout << "Queue empty\n";
+            return;
+        }
+        QueueNode<T>* temp = front;
+        front = front->next;
+        if (!front)
+        {
+            rear = nullptr;
+        }
+        delete temp;
+    }
+    bool isEmpty()
+    {
+        return front == nullptr;
+    }
+
+    void display()
+    {
+        if (!front)
+        {
+            cout << "Queue empty\n";
+            return;
+        }
+        QueueNode<T>* temp = front;
+        while (temp)
+        {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+};
+
+
+template <typename T>
+class StackNode
+{
+public:
+    T data;
+    StackNode* next;
+    StackNode(T d) : data(d), next(nullptr) {}
+};
+
+template <typename T>
+class Stack
+{
+    StackNode<T>* top;
+
+public:
+    Stack() : top(NULL) {}
+    ~Stack()
+    {
+        removeAll();
+    }
+    void push(T val)
+    {
+        if (top)
+        {
+            StackNode<T>* newNode = new StackNode<T>(val);
+            newNode->next = top;
+            top = newNode;
+            return;
+        }
+        top = new StackNode<T>(val);
+    }
+    T pop()
+    {
+        if (top)
+        {
+            T rVal = top->data;
+            StackNode<T>* temp = top;
+            top = top->next;
+            delete temp;
+            return rVal;
+        }
+        return T(); // Return default value for type T
+    }
+    T topNode()
+    {
+        if (top)
+        {
+            return top->data;
+        }
+        throw runtime_error("Stack is empty. No top node available.");
+    }
+    bool isEmpty()
+    {
+        return top == nullptr;
+    }
+    void removeAll()
+    {
+        StackNode<T>* temp = top;
+        while (top)
+        {
+            StackNode<T>* next = temp->next;
+            delete temp;
+            temp = next;
+        }
+        temp = nullptr;
+    }
+    void display()
+    {
+        if (isEmpty())
+        {
+            cout << "Stack is empty.\n";
+            return;
+        }
+        StackNode<T>* temp = top;
+        cout << "Stack: ";
+        while (temp)
+        {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+};
+
+template <typename T>
 class DynamicArr
 {
     T* arr = nullptr;
@@ -166,7 +337,6 @@ class LinkedList
 public:
     struct Node
     {
-
         T data;
         Node* next;
 
@@ -411,13 +581,13 @@ struct Edge
     explicit Edge(string name = "", const int w = -1) : name(std::move(name)), Weight(w) {}
 };
 
-
 class Car
 {
     std::string plate;
     int x, y;
     int velocity;
     int priority;
+    Stack<char> shortest_path;
 
 public:
     Car(int P = 0) : priority(P) {}
@@ -455,8 +625,8 @@ public:
 
 class Map
 { 
-    int arr[BUCKETS];
-
+    int *arr;
+    int size;
     // private functions
     int hashFunc(std::string name)
     {
@@ -470,14 +640,20 @@ class Map
     }
 
 public:
-    Map()
+    Map(int s = BUCKETS,int default_value = 0): size(s)
     {
-        for (int i = 0; i < BUCKETS; i++)
+        arr = new int[size];
+        for (int i = 0; i < size; i++)
         {
-            arr[i] = 0;
+            arr[i] = default_value;
         }
     }
-
+    ~Map()
+    {
+        if(arr)
+            delete[] arr;
+        arr = nullptr;
+    }
     void insert(std::string name, int val)
     {
         const int key = hashFunc(name);
@@ -497,11 +673,60 @@ public:
     }
 };
 
+class Char_Map
+{
+    char *current;
+    char* parent;
+    int size;
+    // private functions
+    int hashFunc(char name)
+    {
+        name = toupper(name);
+        return name - 'A';
+    }
+
+public:
+    Char_Map(int s = vertices,char default_value = '\0'): size(s)
+    {
+        current = new char[size];
+        parent = new char[size];
+        for (int i = 0; i < size; i++)
+        {
+            current[i] = default_value;
+            parent[i] = default_value;
+        }
+    }
+    ~Char_Map()
+    {
+        if(current && parent)
+        {
+            delete[] current;
+            delete[] parent;
+        }
+        current = nullptr;
+        parent = nullptr;
+    }
+    void insert(char& c, char& p)
+    {
+        const int key = hashFunc(c);
+        current[key] = c;
+        parent[key] = p;
+    }
+
+    char& operator[](char current)
+    {
+        // returns the parent of the current index
+        const int key = hashFunc(current);
+        return parent[key];
+    }
+};
+
 struct GraphNode
 {
-    string targetIntersection;
+    char targetIntersection;
     int travelTime; // weight
-    GraphNode(string target, int time) : targetIntersection(target), travelTime(time)
+    GraphNode(){}
+    GraphNode(char target, int time) : targetIntersection(target), travelTime(time)
     {}
 
     friend ostream& operator << (ostream& out, GraphNode& obj)
@@ -510,6 +735,20 @@ struct GraphNode
         out << obj.travelTime;
         return out;
     }
+
+    bool operator>(const GraphNode& obj) const
+    {
+        return this->travelTime > obj.travelTime;
+    }
+    bool operator<(const GraphNode& obj) const
+    {
+        return this->travelTime < obj.travelTime;
+    }
+    bool operator==(const GraphNode& obj) const
+    {
+        return this->travelTime == obj.travelTime;
+    }
+
 };
 
 // Graph Class to manage intersections and roads
@@ -527,7 +766,7 @@ public:
     }
 
     // Add an edge (road) between two intersections
-    void addEdge(char from, const string &to, int travelTime)
+    void addEdge(char from, char to, int travelTime)
     {
         int fromIndex = from - 'A';  // Convert character to index (A=0, B=1, ..., Z=25)
         if (fromIndex < 0 || fromIndex >= vertexCount)
@@ -536,7 +775,7 @@ public:
             return;
         }
         
-        std::string roadName = from + to;
+        std::string roadName = to_string(from) + to;
         carCount.insert(roadName, 0);
         
         GraphNode newNode(to, travelTime);
@@ -574,182 +813,12 @@ public:
             getline(ss, intersection1, ',');
             getline(ss, intersection2, ',');
             ss >> travelTime;
-
             // Add the edge to the graph
-            addEdge(intersection1[0], intersection2, travelTime);
+            addEdge(intersection1[0], intersection2[2], travelTime);
         }
 
         file.close();
         
-    }
-};
-
-template <typename T>
-class StackNode
-{
-public:
-    T data;
-    StackNode* next;
-    StackNode(T d) : data(d), next(nullptr) {}
-};
-template <typename T>
-class Stack
-{
-    StackNode<T>* top;
-
-public:
-    Stack() : top(NULL) {}
-    ~Stack()
-    {
-        removeAll();
-    }
-    void push(T val)
-    {
-        if (top)
-        {
-            StackNode<T>* newNode = new StackNode<T>(val);
-            newNode->next = top;
-            top = newNode;
-            return;
-        }
-        top = new StackNode<T>(val);
-    }
-    T pop()
-    {
-        if (top)
-        {
-            T rVal = top->data;
-            StackNode<T>* temp = top;
-            top = top->next;
-            delete temp;
-            return rVal;
-        }
-        return T(); // Return default value for type T
-    }
-    T topNode()
-    {
-        if (top)
-        {
-            return top->data;
-        }
-        throw runtime_error("Stack is empty. No top node available.");
-    }
-    bool isEmpty()
-    {
-        return top == nullptr;
-    }
-    void removeAll()
-    {
-        StackNode<T>* temp = top;
-        while (top)
-        {
-            StackNode<T>* next = temp->next;
-            delete temp;
-            temp = next;
-        }
-        temp = nullptr;
-    }
-    void display()
-    {
-        if (isEmpty())
-        {
-            cout << "Stack is empty.\n";
-            return;
-        }
-        StackNode<T>* temp = top;
-        cout << "Stack: ";
-        while (temp)
-        {
-            cout << temp->data << " ";
-            temp = temp->next;
-        }
-        cout << endl;
-    }
-};
-
-template <typename T>
-class QueueNode
-{
-public:
-    T data;
-    QueueNode* next;
-
-    QueueNode(T d) : data(d), next(nullptr) {}
-};
-
-template <typename T>
-class Queue
-{
-private:
-    QueueNode<T>* front;
-    QueueNode<T>* rear;
-
-public:
-    Queue() : front(nullptr), rear(nullptr) {}
-
-    ~Queue()
-    {
-        while (front)
-        {
-            dequeue();
-        }
-    }
-
-    void enqueue(T x)
-    {
-        QueueNode<T>* newNode = new QueueNode<T>(x);
-        if (!rear)
-        {
-            front = rear = newNode;
-        }
-        else
-        {
-            rear->next = newNode;
-            rear = newNode;
-        }
-    }
-
-    T peek() {
-        if (front == nullptr) {
-            throw std::runtime_error("Queue is empty");
-        }
-        return front->data;
-    }
-
-    void dequeue()
-    {
-        if (!front)
-        {
-            cout << "Queue empty\n";
-            return;
-        }
-        QueueNode<T>* temp = front;
-        front = front->next;
-        if (!front)
-        {
-            rear = nullptr;
-        }
-        delete temp;
-    }
-    bool isEmpty()
-    {
-        return front == nullptr;
-    }
-
-    void display()
-    {
-        if (!front)
-        {
-            cout << "Queue empty\n";
-            return;
-        }
-        QueueNode<T>* temp = front;
-        while (temp)
-        {
-            cout << temp->data << " ";
-            temp = temp->next;
-        }
-        cout << endl;
     }
 };
 
@@ -807,59 +876,6 @@ public:
     virtual T peek() { return heap[0]; }
     virtual bool isEmpty() { return this->size == 0; }
     virtual int getSize() const { return this->size; }
-    virtual void merge(Heap<T>& to, Heap<T>& from)
-    {
-        // merge from heap into to heap
-        while (!from.isEmpty())
-        {
-            T val = from.pop();
-            to.insert(val);
-        }
-    }
-    virtual void pathToRoot(int index)
-    {
-        if (index >= this->size)
-            return;
-        std::cout << "Path to root: ";
-        for (int i = index; i >= 0; i = (i - 1) / 2)
-        {
-            std::cout << heap[i] << ' ';
-        }
-        std::cout << '\n';
-    }
-    virtual void TopMelements(int m)
-    {
-        T* arr = new int[this->size];
-
-        for (int j = 0; j < this->size; j++)
-        {
-            int count = 0;
-            int curr = this->heap[j];
-            arr[j] = -1;
-            for (int i = 0; i < this->size; i++)
-            {
-                if (curr == heap[i])
-                    curr++;
-            }
-            arr[count] = curr;
-        }
-
-        for (int i = this->size; i >= 0; --i)
-        {
-            if (arr[i] != -1)
-                std::cout << arr[i] << ' ';
-        }
-        delete[] arr;
-    }
-    virtual void range(T lower, T higher)
-    {
-        for (int i = 0; i < this->size; i++)
-        {
-            if (heap[i] >= lower && heap[i] <= higher)
-                std::cout << this->heap[i] << ' ';
-        }
-        std::cout << '\n';
-    }
     void print()
     {
         for (int i = 0; i < this->size; i++)

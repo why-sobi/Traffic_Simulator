@@ -6,103 +6,72 @@
 #define FUNCTIONS_H
 #include "classes.hpp"
 #include <fstream>
+#include <iostream>
+
+using namesapce std;
 
 // Prototypes
-void load_graph_from_file(Graph& graph,string file_name);
-int dijkstra(int source, int target, int n, int adj[][10], int weight[][10]);
+int dijkstra(int source, int target, Graph &graph, bool = true);
 
-
-
-
-// Define a simple priority queue structure using a basic array
-struct PriorityQueue {
-    int queue[100][2]; // Stores pairs (distance, vertex)
-    int size;
-
-    PriorityQueue() : size(0) {}
-
-    void push(int distance, int vertex) {
-        queue[size][0] = distance;
-        queue[size][1] = vertex;
-        size++;
-        sort(); // Sort the array after each push
-    }
-
-    void pop() {
-        if (size > 0) {
-            for (int i = 1; i < size; i++) {
-                queue[i - 1][0] = queue[i][0];
-                queue[i - 1][1] = queue[i][1];
-            }
-            size--;
-        }
-    }
-
-    int topDistance() { return queue[0][0]; }
-    int topVertex() { return queue[0][1]; }
-    bool empty() { return size == 0; }
-
-private:
-    void sort() {
-        // Simple selection sort to keep the queue sorted by distance
-        for (int i = 0; i < size - 1; i++) {
-            for (int j = i + 1; j < size; j++) {
-                if (queue[i][0] > queue[j][0]) {
-                    swap(queue[i], queue[j]);
-                }
-            }
-        }
-    }
-};
 // Dijkstra's Algorithm to find the shortest path from source to target
-int dijkstra(int source, int target, Graph &graph) {
-    PriorityQueue pq; // Priority queue for Dijkstra
-    const int n = vertices;
 
-    // Distance and visited arrays
-    int dist[n];
+void dijkstra(char source, char target, Stack<char>& path, Graph &graph, bool = true)
+{
+    MinHeap<GraphNode> pq;  // Priority queue for Dijkstra
+    const int n = vertices;
     bool visited[n];
-    for (int i = 0; i < n; i++)
-    {
-        dist[i] = INT_MAX; // Initialize distances to infinity
-        visited[i] = false; // Initialize all vertices as unvisited
+    Map dist(vertices, INT_MAX);
+    Char_Map predecessor;  // Map to track predecessors
+
+    for (int i = 0; i < n; i++) {
+        visited[i] = false;  // Initialize all vertices as unvisited
     }
 
-    dist[source] = 0; // Distance to the source is 0
-    pq.push(0, source); // Push the source into the priority queue
+    dist[to_string(source)] = 0;  // Distance to the source is 0
+    GraphNode source_node(source, 0);
+    pq.insert(source_node);  // Push the source into the priority queue
 
-    while (!pq.empty()) {
-        int u = pq.topVertex(); // Current vertex
-        int d = pq.topDistance(); // Current distance
+    while (!pq.isEmpty()) {
+        char u = pq.peek().targetIntersection;  // Current vertex
+        int d = pq.peek().travelTime;  // Current distance
         pq.pop();
 
-        // If already visited, skip
-        if (visited[u])
-            continue;
+        if (visited[u]) continue;  // If already visited, skip
 
-        // Mark as visited
-        visited[u] = true;
+        visited[u] = true;  // Mark as visited
 
-        // If we reached the target, return the distance
-        if (u == target) {
-            return dist[u];
-        }
+        if (u == target) break;  // If we reached the target, stop
 
-        // Process all neighbors of u
-        for (auto &neighbor : graph.adjacencyList[u]) {
-            int v = neighbor.first;   // Neighbor vertex
-            int weight_uv = neighbor.second; // Weight of edge u -> v
+        // Process all neighbors of u using a simple for loop
+        for (int i = 0; i < graph.adjacencyList[u].getSize(); ++i) {
+            LinkedList<GraphNode>::Node* temp = graph.adjacencyList[u].getNode(i);
+            while (temp != nullptr)
+            {
+                char v = temp->data.targetIntersection;  // Neighbor vertex
+                int weight_uv = temp->data.travelTime;  // Weight of edge u -> v
 
-            // Update distance if a shorter path is found
-            if (!visited[v] && dist[u] + weight_uv < dist[v]) {
-                dist[v] = dist[u] + weight_uv;
-                pq.push(dist[v], v); // Push the updated distance and vertex into the queue
+                // Update distance if a shorter path is found
+                if (!visited[v] && dist[to_string(u)] + weight_uv < dist[to_string(v)]) {
+                    dist[to_string(v)] = dist[to_string(u)] + weight_uv;
+                    predecessor.insert(v, u);  // Set predecessor for path reconstruction
+                    GraphNode temp_node(v, dist[to_string(v)]);
+                    pq.insert(temp_node);  // Push the updated distance and vertex into the MinHeap
+                }
+                temp = temp->next;
             }
         }
     }
 
-    // If no path is found, return -1
-    return -1;
+    // Reconstruct the path from target to source using predecessors
+    char current = target;
+    while (current != source)
+    {
+        path.push(current);  // Add to path stack
+        current = predecessor[current];  // Move to the predecessor
+    }
+    path.push(source);  // Push the source
 }
+
+
 
 #endif //FUNCTIONS_H
