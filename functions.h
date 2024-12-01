@@ -18,16 +18,15 @@ int dijkstra(int source, int target, Graph& graph, bool shortest = true);
 
 void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool shortest = true)
 {
-    MinHeap<GraphNode> pq; // Priority queue for Dijkstra
     const int n = vertices;
-    bool visited[n];
+
+    MinHeap<GraphNode> pq(n); // Priority queue for Dijkstra
+    Set<char> visited(n);
     Map<char,int> dist(n);
     Map<char,char> predecessor(EDGES); // Map to track predecessors
 
-    for (int i = 0; i < n; i++)
-    {
-        visited[i] = false; // Initialize all vertices as unvisited
-    }
+    for(char i = 'A'; i <= 'Z'; i++)
+        dist.insert(i, INT_MAX);
 
     dist.insert(source, 0); // Distance to the source is 0
     GraphNode source_node(source, 0);
@@ -36,17 +35,15 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
     while (!pq.isEmpty())
     {
         char u = pq.peek().targetIntersection; // Current vertex
-        int d = pq.peek().travelTime; // Current distance
         pq.pop();
 
-        if (visited[u - 'A']) continue; // If already visited, skip
+        if (visited.has(u)) continue; // If already visited, skip
 
-        visited[u - 'A'] = true; // Mark as visited
+        visited.insert(u); // Mark as visited
 
         if (u == target) break; // If we reached the target, stop
 
         // Process all neighbors of u using a simple for loop
-        // for (LinkedList<GraphNode> Node* curr = adjacencyList[childrenListIndex].getHead();  curr; curr = curr->next)
         for (LinkedList<GraphNode>::Node* temp = graph.adjacencyList[u - 'A'].getHead(); temp; temp = temp->next)
         {
             {
@@ -66,7 +63,7 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
                 }
                 */
                 // Update distance if a shorter path is found
-                if (!visited[v - 'A'] && dist[u] + weight_uv < dist[v])
+                if (!visited.has(v) && dist[u] + weight_uv < dist[v])
                 {
                     dist[v] = dist[u] + weight_uv;
                     predecessor.insert(v, u); // Set predecessor for path reconstruction
@@ -77,10 +74,7 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
         }
     }
     // Reconstruct the path from target to source using predecessors
-
     char current = target;
-    if (predecessor[current] == '\0')
-        return;
     while (current != source)
     {
         path.push(current); // Add to path stack

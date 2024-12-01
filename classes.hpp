@@ -13,6 +13,25 @@ const int EDGES = 41;
 const int CARS = 53;     // Cars
 const int vertices = 26;
 
+bool isPrime(int num) {
+    int count = 0;
+    int start = sqrt(num);
+
+    while (start > 0) {
+        if (num % start == 0) count++;
+        start--;
+    }
+
+    return count == 1;
+}
+
+int getNextPrime(int num)
+{
+    if (isPrime(num)) return num;
+    while (!isPrime(num)) num++;
+    return num;
+}
+
 template <typename T>
 class QueueNode
 {
@@ -622,23 +641,109 @@ public:
         return this->priority == obj.priority;
     }
 };
-bool isPrime(int num) {
-    int count = 0;
-    int start = sqrt(num);
 
-    while (start > 0) {
-        if (num % start == 0) count++;
-        start--;
+template <typename T>
+class Set
+{
+    T *arr;   // Pointer to an array that stores the characters in the set
+    int size; // Size of the array
+
+    void setDefault(int *&arr)
+    {
+        for (int i = 0; i < size; i++)
+            arr[i] = INT_MAX;
+    }
+    void setDefault(char *&arr)
+    {
+        for (int i = 0; i < size; i++)
+            arr[i] = '\0';
+    }
+    void setDefault(std::string *&arr)
+    {
+        for (int i = 0; i < size; i++)
+            arr[i] = "";
     }
 
-    return count == 1;
-}
+    bool checkDefault(std::string &str) { return str == ""; }
+    bool checkDefault(char &ch) { return ch == '\0'; }
+    bool checkDefault(int &num) { return num == INT_MAX; }
 
-int getNextPrime(int num) {
-    if (isPrime(num)) return num;
-    while (!isPrime(num)) num++;
-    return num;
-}
+    // Multiplies the ASCII value of the character by 7 and takes modulo with size
+    // 7 is a small prime number that helps in reducing collisions
+    // (31, 37, 13, 41 etc) also can work but better to check through trial and error
+    // 7 in this case have no collisions
+
+    int hashFunction(int value) { return (value * 7) % size; }
+    int hashFunction(std::string str)
+    {
+        int hash = 0;
+        for (int i = 0; i < str.length(); i++)
+            hash += str[i];
+
+        return (hash * 7) % size;
+    }
+    int hashFunction(char ch) { return (int(ch) * 7) % size; }
+    int linearProbe(int index) { return (index + 1) % size; }
+
+public:
+    // Constructor to initialize the set with a given size
+    Set(int s = 31) : size(s)
+    {
+        arr = new T[size]; // Allocate memory for the array
+        setDefault(arr);
+    }
+
+    // Destructor to clean up the allocated memory
+    ~Set()
+    {
+        if (arr)          // Check if arr is not null
+            delete[] arr; // Deallocate memory
+        arr = nullptr;    // Set pointer to null
+    }
+
+    // Method to insert a character into the set
+    void insert(T key_val)
+    {
+        int start = hashFunction(key_val); // Get the initial hash index
+        if (arr[start] == key_val)
+            return; // If the character is already present, do nothing
+        int i = linearProbe(start);
+        while (!checkDefault(arr[i])) // Linear probing to find an empty slot
+        {
+            i = linearProbe(i); // Get the next index using the hash function
+            if (i == start)
+                return; // If we've looped back to the start, the set is full
+        }
+        arr[i] = key_val; // Insert the character at the found index
+    }
+
+    // Method to check if a character is in the set
+    bool has(T key_val)
+    {
+        int start = hashFunction(key_val); // Get the initial hash index
+        if (arr[start] == '\0')
+            return false; // If the slot is empty, the character is not present
+        else if (arr[start] == key_val)
+            return true; // If the character matches, return true
+
+        int i = linearProbe(start); // Start probing from the next index
+        while (!checkDefault(arr[i]) && arr[i] != key_val)
+        {
+            i = linearProbe(i); // Continue probing
+            if (i == start)
+                return false; // If we've looped back to the start, the character is not found
+        }
+        return arr[i] == key_val; // Return true if the character was found
+    }
+
+    // Method to print the contents of the set
+    void print()
+    {
+        for (int i = 0; i < size; i++)
+            checkDefault(arr[i]) ? std::cout << '.' : std::cout << arr[i] << ' '; // Print '.' for empty slots
+        std::cout << '\n';                                                  // New line after printing all elements
+    }
+};
 
 template <typename T, typename M>
 class Map
@@ -703,7 +808,7 @@ public:
     void insert(T key_val, M val_val)
     {
         int start = hashFunction(key_val);
-        if (checkDefault(key[start])) {
+        if (checkDefault(key[start]) || key[start] == key_val) {
             key[start] = key_val;
             value[start] = val_val;
             return;
@@ -773,128 +878,11 @@ public:
     }
 };
 
-// class Map
-// {
-//     int *arr;
-//     int size, default_val;
-//     // private functions
-//     int hashFunc(std::string name)
-//     {
-//         float hash = 0, KnuthConstant = 0.618033;
-//
-//         for (char& c : name)
-//             hash += c;
-//         hash *= KnuthConstant;
-//         hash = int(CARS * (hash - int(hash)));
-//         return int(hash)%size;
-//     }
-//
-// public:
-//     Map(int s = CARS,int default_value = -1): size(s)
-//     {
-//         default_val = default_value;
-//         arr = new int[size];
-//         for (int i = 0; i < size; i++)
-//         {
-//             arr[i] = default_value;
-//         }
-//     }
-//     ~Map()
-//     {
-//         if(arr)
-//             delete[] arr;
-//         arr = nullptr;
-//     }
-//     void insert(std::string name, int val)
-//     {
-//         const int key = hashFunc(name);
-//         arr[key] = val;
-//     }
-//
-//     int& operator[](std::string name)
-//     {
-//         std::cout << "\nCalled for: " << name << " with current value: ";
-//         const int key = hashFunc(name);
-//         std::cout << arr[key];
-//         return arr[key];
-//     }
-//
-//     void remove(std::string name)
-//     {
-//         const int key = hashFunc(name);
-//         arr[key] = default_val;
-//     }
-// };
-//
-// class Char_Map {
-//     char* current;
-//     char* parent;
-//     int size;
-//
-//     // Private hash function for a single character
-//     int hashFunc(char first) {
-//         first = toupper(first);
-//         return (first - 'A') % size;
-//     }
-//
-// public:
-//     // Constructor with size parameter
-//     Char_Map(int s = 41, char default_value = '\0') : size(s) {
-//         current = new char[size];
-//         parent = new char[size];
-//         for (int i = 0; i < size; ++i) {
-//             current[i] = default_value;
-//             parent[i] = default_value;
-//         }
-//     }
-//
-//     // Destructor to clean up memory
-//     ~Char_Map() {
-//         delete[] current;
-//         delete[] parent;
-//     }
-//
-//     // Insert character-parent pair
-//     void insert(char c, char p) {
-//         int key = hashFunc(c);
-//         // Handle collision resolution with linear probing
-//         for (int i = 0; i < size; ++i) {
-//             int probe_index = (key + i) % size;
-//             if (current[probe_index] == '\0')
-//             {
-//                 current[probe_index] = c;
-//                 parent[probe_index] = p;
-//                 return;
-//             }
-//         }
-//     }
-//     // Overloaded operator[] to access parent directly
-//     void display() const {
-//         cout << "debugging\n";
-//         for (int i = 0; i < size; ++i) {
-//                 std::cout << "Current: " << current[i] << ", Parent: " << parent[i] << std::endl;
-//         }
-//     }
-//     char& operator[](char c)
-//     {
-//         int key = hashFunc(c);
-//         for (int i = 0; i < size; ++i)
-//         {
-//             int probe_index = (key + i) % size;
-//             if (current[probe_index] == c)
-//             {
-//                 return parent[probe_index];
-//             }
-//         }
-//     }
-// };
-
 struct GraphNode
 {
     char targetIntersection;
     int travelTime; // weight
-    GraphNode(){}
-    GraphNode(char target, int time) : targetIntersection(target), travelTime(time)
+    GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time)
     {}
 
     friend ostream& operator << (ostream& out, GraphNode& obj)
@@ -927,15 +915,10 @@ public:
 
     LinkedList<GraphNode> adjacencyList[vertices];
     int vertexCount;
-    //Map connectionCount;
 
     Graph(): carCount(CARS)
     {
         vertexCount = vertices;
-        /*for (char ch = 'A'; ch <= 'Z'; ch++) {
-            connectionCount[std::to_string(ch)] = 0;
-            std::cout << connectionCount[to_string(ch)] << '\n';
-        }*/
     }
 
     // Add an edge (road) between two intersections
@@ -947,10 +930,9 @@ public:
             cout << "Invalid intersection!" << endl;
             return;
         }
-        
-        std::cout << "For: " << from << ' ';
-        //++connectionCount[std::to_string(from)]; // increase the number of connections are intersection/node has
-        std::string roadName = to_string(from) + to;
+        std::string roadName = "";
+        roadName += from;
+        roadName += to;
         carCount.insert(roadName,0);
         
         GraphNode newNode(to, travelTime);
@@ -962,7 +944,7 @@ public:
         for (int i = 0; i < vertexCount; i++)
         {
             char intersection = 'A' + i;
-            cout << "Intersection " << intersection << "with " << " has roads to : " << endl;
+            cout << "Intersection " << "with " << " has roads to : " << endl;
             adjacencyList[i].display();
         }
     }
@@ -1042,8 +1024,9 @@ protected:
     virtual void heapify_up() {}
 
 public:
-    Heap(int cap = 5) : capacity(cap), size(0)
+    Heap(int cap) : capacity(cap)
     {
+        size = 0;
         this->heap = new T[capacity];
     }
     virtual ~Heap()
@@ -1096,6 +1079,7 @@ template <typename T>
 class MinHeap : public Heap<T>
 {
 public:
+    MinHeap(int cap) : Heap<T>(cap){}
     void heapify_down()
     {
         int i = 0;
