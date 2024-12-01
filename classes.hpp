@@ -15,7 +15,6 @@ enum CONSTANTS {
     vertices = 26
 };
 
-
 bool isPrime(int num) {
     int count = 0;
     int start = sqrt(num);
@@ -34,6 +33,45 @@ int getNextPrime(int num)
     while (!isPrime(num)) num++;
     return num;
 }
+
+template <typename T1, typename T2>
+class Pair {
+private:
+    T1 first;
+    T2 second;
+
+public:
+    // Default constructor
+    Pair() : first(T1()), second(T2()) {}
+
+    // Parameterized constructor
+    Pair(T1 f, T2 s) : first(f), second(s) {}
+
+    // Getter methods
+    T1 getFirst() const {
+        return first;
+    }
+
+    T2 getSecond() const {
+        return second;
+    }
+
+    // Setter methods
+    void setFirst(T1 f) {
+        first = f;
+    }
+
+    void setSecond(T2 s) {
+        second = s;
+    }
+
+    // Display function
+    friend ostream& operator <<(ostream& out, Pair& obj)
+    {
+        out << "(" << obj.first << ", " << obj.second << ")" << endl;
+        return out;
+    }
+};
 
 template <typename T>
 class QueueNode
@@ -596,13 +634,6 @@ public:
     }
 };
 
-struct Edge
-{
-    string name;
-    int Weight;
-    explicit Edge(string name = "", const int w = -1) : name(std::move(name)), Weight(w) {}
-};
-
 class Car
 {
     std::string plate;
@@ -889,12 +920,13 @@ struct GraphNode
 {
     char targetIntersection;
     int travelTime; // weight
-    GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time)
+    int heuristic_value;
+    GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time), heuristic_value(INT_MAX)
     {}
 
     friend ostream& operator << (ostream& out, GraphNode& obj)
     {
-        out << obj.targetIntersection;
+        out << obj.targetIntersection << " ";
         out << obj.travelTime;
         return out;
     }
@@ -918,14 +950,16 @@ struct GraphNode
 class Graph
 {
     Map<string,int> carCount;
+    Map<char,string> intersection_coordinates;
 public:
 
     LinkedList<GraphNode> adjacencyList[vertices];
     int vertexCount;
 
-    Graph(): carCount(CARS)
+    Graph(): carCount(CARS), intersection_coordinates(vertices)
     {
         vertexCount = vertices;
+        load_coordinates();
     }
 
     // Add an edge (road) between two intersections
@@ -946,12 +980,12 @@ public:
         adjacencyList[fromIndex].insertAtStart(newNode);
     }
 
-    void displayGraph() const
+    void displayGraph()
     {
         for (int i = 0; i < vertexCount; i++)
         {
             char intersection = 'A' + i;
-            cout << "Intersection " << "with " << " has roads to : " << endl;
+            cout << "Intersection " << "with " << intersection << " has roads to : " << endl;
             adjacencyList[i].display();
         }
     }
@@ -980,14 +1014,31 @@ public:
             // Add the edge to the graph
             addEdge(intersection1[0], intersection2[0], travelTime);
         }
-
         file.close();
-        
     }
-    
-    /*int getRoadCarCount(std::string name) {
-        return carCount[name];
-    }*/
+
+    void load_coordinates(const string &filename = "csv/intersection.csv")
+    {
+        ifstream file(filename);
+        if (!file.is_open())
+        {
+            cout << "Error opening file!" << endl;
+            return;
+        }
+
+        string line;
+        getline(file, line);
+
+        while (getline(file, line))
+        {
+            stringstream ss(line);
+            string intersection, intersection2;
+            getline(ss, intersection, ',');
+            getline(ss, intersection2);
+            intersection_coordinates.insert(intersection[0], intersection2);
+        }
+        file.close();
+    }
 
     void BFSpathFinding(char source, char goal, Stack<char>& path) {
         Queue<char> q;
@@ -1030,6 +1081,25 @@ public:
         }
         path.push(source);
     }
+
+    Pair<int,int> get_coordinates(char intersection)
+    {
+        string coords = intersection_coordinates[intersection];
+        int pos = coords.find(',');
+        int x = stoi(coords.substr(0, pos));
+        int y = stoi(coords.substr(pos + 1));
+        return Pair(x,y);
+    }
+
+    int heuristic(char start,char goal)
+    {
+        Pair<int,int> startCoords = get_coordinates(start);
+        Pair<int,int> goalCoords = get_coordinates(goal);
+        int d1 = startCoords.getFirst() - goalCoords.getFirst();
+        int d2 = startCoords.getSecond() - goalCoords.getSecond();
+        return sqrt(d1*d1 + d2*d2);
+    }
+
 };
 
 template <typename T>
