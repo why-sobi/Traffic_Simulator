@@ -9,9 +9,12 @@
 
 using namespace std;
 
-const int EDGES = 41;
-const int CARS = 53;     // Cars
-const int vertices = 26;
+enum CONSTANTS {
+    EDGES = 41,
+    CARS = 53,     // Cars
+    vertices = 26
+};
+
 
 bool isPrime(int num) {
     int count = 0;
@@ -606,7 +609,8 @@ class Car
     int x, y;
     int velocity;
     int priority;
-    Stack<char> shortest_path;
+    char starting, ending;
+    Stack<char> path;
 
 public:
     Car(int P = 0) : priority(P) {}
@@ -617,7 +621,10 @@ public:
     int getY() const { return y; }
     int getVelocity() const { return velocity; }
     int getPriority() const { return priority; }
+    char getStarting() const { return starting; }
+    char getEnding() const { return ending; }
     std::string getPlate() const { return plate; }
+    Stack<char>& getPath() { return path; }
 
     // Setters
     void setX(int X) { x = X; }
@@ -982,34 +989,47 @@ public:
         return carCount[name];
     }*/
 
-    /*
-    void BFSpathFinding(char source, char goal, Queue<char>& path) {
+    void BFSpathFinding(char source, char goal, Stack<char>& path) {
         Queue<char> q;
-        Set set(31); // as their are at max 26 vertices, closest prime number is 31
+        Set<char> visited(vertices); // as their are at max 26 vertices, closest prime number is 31
+        Map<char, char> map(vertices);
+
+        map.insert(source, '\0'); // considering source has no papa
 
         q.enqueue(source);
-        while (!q.isEmpty())
+        bool done = false;
+
+        while (!q.isEmpty() || !done)
         {
-            char current = q.peek();
-            path.enqueue(ch);
-            q.pop();
-            set.insert(ch); // to keep check of what nodes have been passed
+            char ch = q.peek();
+            q.dequeue();
+            visited.insert(ch); // to keep check of what nodes have been passed
 
             int childrenListIndex = ch - 'A';
 
-            for (LinkedList<GraphNode> Node* curr = adjacencyList[childrenListIndex].getHead();  curr; curr = curr->next) {
-                if (curr->data->targetIntersection == goal) {
-                    path.enqueue(goal);
-                    return;
+            for (LinkedList<GraphNode>::Node* curr = adjacencyList[childrenListIndex].getHead(); curr || !done; curr = curr->next) {
+                char currentChar = curr->data.targetIntersection;
+                map.insert(currentChar, ch); // to keep track of papa beta relationship 
+
+                if (currentChar == goal) { // found goal node
+                    done = true;
                 }
-                if (!set.has(curr->data->targetIntersection))
-                    q.enqueue(curr->data->targetIntersection);
-            } 
+                if (!visited.has(currentChar)) // add to visited set
+                    q.enqueue(currentChar);
+            }
         }
         // if goal wasn't found empty the path
-        while (!path.isEmpty()) .dequeue();
+        if (!done) {
+            while (!path.isEmpty()) path.pop();
+            return;
+        }
+        // else find the path by parent back tracking
+        while (goal != source) {
+            path.push(goal);
+            goal = map[goal];
+        }
+        path.push(source);
     }
-    */
 };
 
 template <typename T>

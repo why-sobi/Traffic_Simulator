@@ -5,9 +5,13 @@
 #include "classes.hpp"
 #include "functions.h"
 
-void reRouteCar(Graph& matrix, Stack<char>& carPath, char from)
+void reRouteCar(Graph& matrix, Car& car)
 {
-	dijkstra(from, carPath.topNode(), matrix, false); // to get the fastest wrt to time path
+	Stack<char> path = car.getPath(); // returns reference of stack path
+	char goal = car.getEnding(), source = car.getStarting(); // returns the starting and ending point of a car
+
+	path.removeAll(); // empties the stack
+	matrix.BFSpathFinding(source, goal, path); 
 }
 
 #endif
