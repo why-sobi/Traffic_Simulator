@@ -624,7 +624,7 @@ public:
 class Map
 { 
     int *arr;
-    int size;
+    int size, default_val;
     // private functions
     int hashFunc(std::string name)
     {
@@ -638,8 +638,9 @@ class Map
     }
 
 public:
-    Map(int s = BUCKETS,int default_value = 0): size(s)
+    Map(int s = BUCKETS,int default_value = -1): size(s)
     {
+        default_val = default_value;
         arr = new int[size];
         for (int i = 0; i < size; i++)
         {
@@ -660,14 +661,16 @@ public:
 
     int& operator[](std::string name)
     {
+        std::cout << "\nCalled for: " << name << " with current value: ";
         const int key = hashFunc(name);
+        std::cout << arr[key];
         return arr[key];
     }
 
-    void reset(std::string name)
+    void remove(std::string name)
     {
         const int key = hashFunc(name);
-        arr[key] = 0;
+        arr[key] = default_val;
     }
 };
 
@@ -772,10 +775,16 @@ public:
 
     LinkedList<GraphNode> adjacencyList[vertices];
     int vertexCount;
+    //Map connectionCount;
 
     Graph()
     {
         vertexCount = vertices;
+        /*for (char ch = 'A'; ch <= 'Z'; ch++) {
+            connectionCount[std::to_string(ch)] = 0;
+            std::cout << connectionCount[to_string(ch)] << '\n';
+        }*/
+
     }
 
     // Add an edge (road) between two intersections
@@ -788,19 +797,21 @@ public:
             return;
         }
         
+        std::cout << "For: " << from << ' ';
+        //++connectionCount[std::to_string(from)]; // increase the number of connections are intersection/node has
         std::string roadName = to_string(from) + to;
-        carCount.insert(roadName, 0);
+        carCount[roadName] = 0;
         
         GraphNode newNode(to, travelTime);
         adjacencyList[fromIndex].insertAtStart(newNode);
     }
 
-    void displayGraph()
+    void displayGraph() const
     {
         for (int i = 0; i < vertexCount; i++)
         {
             char intersection = 'A' + i;
-            cout << "Intersection " << intersection << " has roads to: "<<endl;
+            cout << "Intersection " << intersection << "with " << " has roads to : " << endl;
             adjacencyList[i].display();
         }
     }
@@ -833,6 +844,39 @@ public:
         file.close();
         
     }
+    
+    /*int getRoadCarCount(std::string name) {
+        return carCount[name];
+    }*/
+
+    /*
+    void BFSpathFinding(char source, char goal, Queue<char>& path) {
+        Queue<char> q;
+        Set set(31); // as their are at max 26 vertices, closest prime number is 31
+
+        q.enqueue(source);
+        while (!q.isEmpty())
+        {
+            char current = q.peek();
+            path.enqueue(ch);
+            q.pop();
+            set.insert(ch); // to keep check of what nodes have been passed
+
+            int childrenListIndex = ch - 'A';
+
+            for (LinkedList<GraphNode> Node* curr = adjacencyList[childrenListIndex].getHead();  curr; curr = curr->next) {
+                if (curr->data->targetIntersection == goal) {
+                    path.enqueue(goal);
+                    return;
+                }
+                if (!set.has(curr->data->targetIntersection))
+                    q.enqueue(curr->data->targetIntersection);
+            } 
+        }
+        // if goal wasn't found empty the path
+        while (!path.isEmpty()) .dequeue();
+    }
+    */
 };
 
 template <typename T>
@@ -1011,4 +1055,5 @@ class MaxHeap : public Heap<T>
             arr[i] = temp.pop();
     }
 };
+
 #endif //CLASSES_HPP

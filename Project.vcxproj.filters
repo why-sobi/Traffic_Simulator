@@ -32,6 +32,9 @@
     <ClInclude Include="module4.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="module5.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="csv\emergency_vehicles.csv">

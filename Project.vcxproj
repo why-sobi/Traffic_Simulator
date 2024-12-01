@@ -138,6 +138,7 @@
     <ClInclude Include="functions.h" />
     <ClInclude Include="module4.hpp" />
     <ClInclude Include="Module1.hpp" />
+    <ClInclude Include="module5.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="csv\emergency_vehicles.csv" />

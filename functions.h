@@ -4,6 +4,7 @@
 
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
+
 #include "classes.hpp"
 #include <fstream>
 #include <iostream>
@@ -11,17 +12,18 @@
 using namespace std;
 
 // Prototypes
-int dijkstra(int source, int target, Graph &graph, bool = true);
+int dijkstra(int source, int target, Graph &graph, bool shortest = true);
 
 // Dijkstra's Algorithm to find the shortest path from source to target
 
-void dijkstra(char source, char target, Stack<char>& path, Graph &graph, bool = true)
+void dijkstra(char source, char target, Stack<char>& path, Graph &graph, bool shortest = true)
 {
     MinHeap<GraphNode> pq;  // Priority queue for Dijkstra
     const int n = vertices;
     bool visited[n];
     Map dist(n, INT_MAX);
     Char_Map predecessor;  // Map to track predecessors
+
     for (int i = 0; i < n; i++)
     {
         visited[i] = false;  // Initialize all vertices as unvisited
@@ -49,6 +51,19 @@ void dijkstra(char source, char target, Stack<char>& path, Graph &graph, bool = 
             {
                 char v = temp->data.targetIntersection;  // Neighbor vertex
                 int weight_uv = temp->data.travelTime;  // Weight of edge u -> v
+
+                /*
+                if (!shortest) {
+                    std::string roadName = std::to_string(u) + v;
+                    weight_uv = graph.getRoadCarCount(roadName); // returns the weight that is now the traffic on the road
+                    if (weight_uv == -1) // -1 is the default sentinel value
+                    {
+                        continue; 
+                        // the connection doesn't exist (although ion think this condition will ever be true unless
+                        // dynamic addition or removal of roads
+                    }
+                }
+                */
 
                 // Update distance if a shorter path is found
                 if (!visited[v-'A'] && dist[to_string(u)] + weight_uv < dist[to_string(v)]) {
