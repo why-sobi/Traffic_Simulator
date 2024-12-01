@@ -1,6 +1,7 @@
 #ifndef CLASSES_HPP
 #define CLASSES_HPP
 
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -8,7 +9,8 @@
 
 using namespace std;
 
-const int BUCKETS = 53;
+const int EDGES = 41;
+const int CARS = 53;     // Cars
 const int vertices = 26;
 
 template <typename T>
@@ -620,122 +622,272 @@ public:
         return this->priority == obj.priority;
     }
 };
+bool isPrime(int num) {
+    int count = 0;
+    int start = sqrt(num);
 
-class Map
-{ 
-    int *arr;
-    int size, default_val;
-    // private functions
-    int hashFunc(std::string name)
-    {
-        float hash = 0, KnuthConstant = 0.618033;
-
-        for (char& c : name)
-            hash += c;
-        hash *= KnuthConstant;
-        hash = int(BUCKETS * (hash - int(hash)));
-        return int(hash)%size;
+    while (start > 0) {
+        if (num % start == 0) count++;
+        start--;
     }
 
-public:
-    Map(int s = BUCKETS,int default_value = -1): size(s)
+    return count == 1;
+}
+
+int getNextPrime(int num) {
+    if (isPrime(num)) return num;
+    while (!isPrime(num)) num++;
+    return num;
+}
+
+template <typename T, typename M>
+class Map
+{
+    T *key;
+    M *value;
+    int size;
+
+    void setDefault(int *&arr)
     {
-        default_val = default_value;
-        arr = new int[size];
         for (int i = 0; i < size; i++)
-        {
-            arr[i] = default_value;
-        }
+            arr[i] = INT_MAX;
+    }
+    void setDefault(char *&arr)
+    {
+        for (int i = 0; i < size; i++)
+            arr[i] = '\0';
+    }
+    void setDefault(std::string *&arr)
+    {
+        for (int i = 0; i < size; i++)
+            arr[i] = "";
+    }
+
+    bool checkDefault(std::string &str) { return str == ""; }
+    bool checkDefault(char &ch) { return ch == '\0'; }
+    bool checkDefault(int &num) { return num == INT_MAX; }
+
+    int hashFunction(int value) { return (value * 7) % size; }
+    int hashFunction(std::string str)
+    {
+        int hash = 0;
+        for (int i = 0; i < str.length(); i++)
+            hash += str[i];
+
+        return (hash * 7) % size;
+    }
+    int hashFunction(char ch) { return (int(ch) * 7) % size; }
+    int linearProbe(int index) { return (index + 1) % size; }
+
+public:
+    Map(int s)
+    {
+        size = getNextPrime(s);
+        key = new T[size];
+        value = new M[size];
+
+        setDefault(key);
+        setDefault(value);
     }
     ~Map()
     {
-        if(arr)
-            delete[] arr;
-        arr = nullptr;
+        if (key)
+            delete[] key;
+        if (value)
+            delete[] value;
+
+        key = nullptr;
+        value = nullptr;
     }
-    void insert(std::string name, int val)
+
+    void insert(T key_val, M val_val)
     {
-        const int key = hashFunc(name);
-        arr[key] = val;
-    }
-
-    int& operator[](std::string name)
-    {
-        std::cout << "\nCalled for: " << name << " with current value: ";
-        const int key = hashFunc(name);
-        std::cout << arr[key];
-        return arr[key];
-    }
-
-    void remove(std::string name)
-    {
-        const int key = hashFunc(name);
-        arr[key] = default_val;
-    }
-};
-
-class Char_Map {
-    char* current;
-    char* parent;
-    int size;
-
-    // Private hash function for a single character
-    int hashFunc(char first) {
-        first = toupper(first);
-        return (first - 'A') % size;
-    }
-
-public:
-    // Constructor with size parameter
-    Char_Map(int s = 41, char default_value = '\0') : size(s) {
-        current = new char[size];
-        parent = new char[size];
-        for (int i = 0; i < size; ++i) {
-            current[i] = default_value;
-            parent[i] = default_value;
+        int start = hashFunction(key_val);
+        if (checkDefault(key[start])) {
+            key[start] = key_val;
+            value[start] = val_val;
+            return;
         }
-    }
 
-    // Destructor to clean up memory
-    ~Char_Map() {
-        delete[] current;
-        delete[] parent;
-    }
+        int i = linearProbe(start);
 
-    // Insert character-parent pair
-    void insert(char c, char p) {
-        int key = hashFunc(c);
-        // Handle collision resolution with linear probing
-        for (int i = 0; i < size; ++i) {
-            int probe_index = (key + i) % size;
-            if (current[probe_index] == '\0')
-            {
-                current[probe_index] = c;
-                parent[probe_index] = p;
-                return;
-            }
-        }
-    }
-    // Overloaded operator[] to access parent directly
-    void display() const {
-        cout << "debugging\n";
-        for (int i = 0; i < size; ++i) {
-                std::cout << "Current: " << current[i] << ", Parent: " << parent[i] << std::endl;
-        }
-    }
-    char& operator[](char c)
-    {
-        int key = hashFunc(c);
-        for (int i = 0; i < size; ++i)
+        while (!checkDefault(key[i]))
         {
-            int probe_index = (key + i) % size;
-            if (current[probe_index] == c)
-            {
-                return parent[probe_index];
-            }
+            if (i == start)
+                throw std::runtime_error("Map is full");
+            i = linearProbe(i);
+        }
+
+        if (checkDefault(key[i])) {
+            key[i] = key_val;
+        }
+        value[i] = val_val;
+
+    }
+
+    bool find(T key_val)
+    {
+        int start = hashFunction(key_val);
+        if (checkDefault(key[start]))
+            return false;
+        else if (key[start] == key_val) return true;
+
+        int i = linearProbe(start);
+        while (!checkDefault(key[i]) && key[i] != key_val)
+        {
+            if (i == start)
+                return false;
+            i = linearProbe(i);
+        }
+        if (checkDefault(key[i]))
+            return false;
+        return true;
+    }
+
+    M &operator[](T key_val)
+    {
+        if(!find(key_val))
+            throw std::runtime_error("Invalid KEY!\n");
+        int start = hashFunction(key_val);
+        if (checkDefault(key[start]))
+            throw std::runtime_error("Invalid KEY!\n");
+        else if (key[start] == key_val) return value[start];
+
+        int i = linearProbe(start);
+        while (!checkDefault(key[i]) && key[i] != key_val)
+        {
+            if (i == start)
+                throw std::runtime_error("Map is full");
+            i = linearProbe(i);
+        }
+        if (checkDefault(key[i])) {
+            throw std::runtime_error("Invalid KEY!\n");
+        }
+        return value[i];
+    }
+
+    void print() {
+        for (int i = 0; i < size; i++) {
+            checkDefault(key[i]) ? std::cout << "Def : ...\n" : std::cout << key[i] << " : " << value[i] << '\n';
         }
     }
 };
+
+// class Map
+// {
+//     int *arr;
+//     int size, default_val;
+//     // private functions
+//     int hashFunc(std::string name)
+//     {
+//         float hash = 0, KnuthConstant = 0.618033;
+//
+//         for (char& c : name)
+//             hash += c;
+//         hash *= KnuthConstant;
+//         hash = int(CARS * (hash - int(hash)));
+//         return int(hash)%size;
+//     }
+//
+// public:
+//     Map(int s = CARS,int default_value = -1): size(s)
+//     {
+//         default_val = default_value;
+//         arr = new int[size];
+//         for (int i = 0; i < size; i++)
+//         {
+//             arr[i] = default_value;
+//         }
+//     }
+//     ~Map()
+//     {
+//         if(arr)
+//             delete[] arr;
+//         arr = nullptr;
+//     }
+//     void insert(std::string name, int val)
+//     {
+//         const int key = hashFunc(name);
+//         arr[key] = val;
+//     }
+//
+//     int& operator[](std::string name)
+//     {
+//         std::cout << "\nCalled for: " << name << " with current value: ";
+//         const int key = hashFunc(name);
+//         std::cout << arr[key];
+//         return arr[key];
+//     }
+//
+//     void remove(std::string name)
+//     {
+//         const int key = hashFunc(name);
+//         arr[key] = default_val;
+//     }
+// };
+//
+// class Char_Map {
+//     char* current;
+//     char* parent;
+//     int size;
+//
+//     // Private hash function for a single character
+//     int hashFunc(char first) {
+//         first = toupper(first);
+//         return (first - 'A') % size;
+//     }
+//
+// public:
+//     // Constructor with size parameter
+//     Char_Map(int s = 41, char default_value = '\0') : size(s) {
+//         current = new char[size];
+//         parent = new char[size];
+//         for (int i = 0; i < size; ++i) {
+//             current[i] = default_value;
+//             parent[i] = default_value;
+//         }
+//     }
+//
+//     // Destructor to clean up memory
+//     ~Char_Map() {
+//         delete[] current;
+//         delete[] parent;
+//     }
+//
+//     // Insert character-parent pair
+//     void insert(char c, char p) {
+//         int key = hashFunc(c);
+//         // Handle collision resolution with linear probing
+//         for (int i = 0; i < size; ++i) {
+//             int probe_index = (key + i) % size;
+//             if (current[probe_index] == '\0')
+//             {
+//                 current[probe_index] = c;
+//                 parent[probe_index] = p;
+//                 return;
+//             }
+//         }
+//     }
+//     // Overloaded operator[] to access parent directly
+//     void display() const {
+//         cout << "debugging\n";
+//         for (int i = 0; i < size; ++i) {
+//                 std::cout << "Current: " << current[i] << ", Parent: " << parent[i] << std::endl;
+//         }
+//     }
+//     char& operator[](char c)
+//     {
+//         int key = hashFunc(c);
+//         for (int i = 0; i < size; ++i)
+//         {
+//             int probe_index = (key + i) % size;
+//             if (current[probe_index] == c)
+//             {
+//                 return parent[probe_index];
+//             }
+//         }
+//     }
+// };
 
 struct GraphNode
 {
@@ -770,21 +922,20 @@ struct GraphNode
 // Graph Class to manage intersections and roads
 class Graph
 {
-    Map carCount;
+    Map<string,int> carCount;
 public:
 
     LinkedList<GraphNode> adjacencyList[vertices];
     int vertexCount;
     //Map connectionCount;
 
-    Graph()
+    Graph(): carCount(CARS)
     {
         vertexCount = vertices;
         /*for (char ch = 'A'; ch <= 'Z'; ch++) {
             connectionCount[std::to_string(ch)] = 0;
             std::cout << connectionCount[to_string(ch)] << '\n';
         }*/
-
     }
 
     // Add an edge (road) between two intersections
@@ -800,7 +951,7 @@ public:
         std::cout << "For: " << from << ' ';
         //++connectionCount[std::to_string(from)]; // increase the number of connections are intersection/node has
         std::string roadName = to_string(from) + to;
-        carCount[roadName] = 0;
+        carCount.insert(roadName,0);
         
         GraphNode newNode(to, travelTime);
         adjacencyList[fromIndex].insertAtStart(newNode);
