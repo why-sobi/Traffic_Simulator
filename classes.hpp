@@ -830,7 +830,6 @@ public:
         value = new M[size];
 
         setDefault(key);
-        setDefault(value);
     }
     ~Map()
     {
@@ -921,7 +920,9 @@ struct GraphNode
     char targetIntersection;
     int travelTime; // weight
     int heuristic_value;
-    GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time), heuristic_value(INT_MAX)
+    bool is_blocked;
+    int backup_value;
+    GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time), heuristic_value(INT_MAX), is_blocked(false), backup_value(0)
     {}
 
     friend ostream& operator << (ostream& out, GraphNode& obj)
