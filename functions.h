@@ -51,18 +51,17 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
                 char v = temp->data.targetIntersection; // Neighbor vertex
                 int weight_uv = temp->data.travelTime; // Weight of edge u -> v
 
-                /*
+                
                 if (!shortest) {
                     std::string roadName = std::to_string(u) + v;
-                    weight_uv = graph.getRoadCarCount(roadName); // returns the weight that is now the traffic on the road
+                    weight_uv = graph.getRoadcarCount(roadName); // returns the weight that is now the traffic on the road
                     if (weight_uv == -1) // -1 is the default sentinel value
                     {
-                        continue; 
+                     continue; 
                         // the connection doesn't exist (although ion think this condition will ever be true unless)
                         // dynamic addition or removal of roads
                     }
                 }
-                */
                 // Update distance if a shorter path is found
                 if (!visited.has(v) && dist[u] + weight_uv < dist[v])
                 {

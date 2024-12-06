@@ -982,6 +982,11 @@ public:
         adjacencyList[fromIndex].insertAtStart(newNode);
     }
 
+    int getRoadcarCount(string n)
+    {
+        return carCount[n];
+    }
+
     void displayGraph()
     {
         for (int i = 0; i < vertexCount; i++)
