@@ -823,6 +823,8 @@ class Map
     int hashFunction(char ch) { return (int(ch) * 7) % size; }
     int linearProbe(int index) { return (index + 1) % size; }
 
+
+
 public:
     Map(int s)
     {
@@ -914,6 +916,10 @@ public:
             checkDefault(key[i]) ? std::cout << "Def : ...\n" : std::cout << key[i] << " : " << value[i] << '\n';
         }
     }
+
+    int getSize(){ return size; }
+
+
 };
 
 struct GraphNode
@@ -961,7 +967,6 @@ public:
     Graph(): carCount(CARS), intersection_coordinates(vertices)
     {
         vertexCount = vertices;
-        load_coordinates();
     }
 
     // Add an edge (road) between two intersections
@@ -1024,6 +1029,14 @@ public:
         file.close();
     }
 
+    void initialize_coordinates()
+    {
+        for(char a = 'A'; a <= 'Z'; a++)
+        {
+            intersection_coordinates.insert(a," ");
+        }
+    }
+
     void load_coordinates(const string &filename = "csv/intersection.csv")
     {
         ifstream file(filename);
@@ -1047,6 +1060,33 @@ public:
         file.close();
     }
 
+    void set_coordinates_of_intersection()
+    {
+        //const std::vector<std::tuple<std::string, std::string, double>>& edges, std::map<std::string, Point>& coordinates
+        initialize_coordinates();
+        intersection_coordinates['A']= "0,0";
+        // Iterate through edges and calculate coordinates
+        for (int i = 0; i < vertexCount; i++)
+        {
+            for (LinkedList<GraphNode>::Node* temp = adjacencyList[i].getHead(); temp; temp = temp->next)
+            {
+                char start = i + 'A';
+                char end = temp->data.targetIntersection;
+                int weight = temp->data.travelTime;
+                if(intersection_coordinates[start] != "")
+                {
+                    Pair p = get_coordinates(start);
+                    intersection_coordinates[end] = to_string(p.getFirst() + weight) +","+ to_string(p.getSecond());
+                }
+                else if(intersection_coordinates[end] != "")
+                {
+                    Pair p = get_coordinates(end);
+                    intersection_coordinates[start] = to_string(p.getFirst() - weight) +","+ to_string(p.getSecond());
+                }
+            }
+        }
+        intersection_coordinates.print();
+    }
     void BFSpathFinding(char source, char goal, Stack<char>& path) {
         Queue<char> q;
         Set<char> visited(vertices); // as their are at max 26 vertices, closest prime number is 31

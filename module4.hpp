@@ -1,9 +1,7 @@
-#ifndef MODULDE4_HPP
-#define MODULDE4_HPP
+#ifndef MODULE4_HPP
+#define MODULE4_HPP
 
-#include <iostream>
 #include "classes.hpp"
-#include "functions.h"
 
 void reRouteCar(Graph& matrix, Car& car)
 {
