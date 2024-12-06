@@ -15,7 +15,9 @@ int main() {
     g.loadFromCSV("csv/road_network.csv");
     g.displayGraph();
     Stack<char> stack;
-    AStar('A','G',stack,g);
+    g.BFSpathFinding('A','M',stack);
+    stack.display();
+    dijkstra('A','M',stack,g);
     stack.display();
     return 0;
 }

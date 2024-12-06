@@ -24,6 +24,7 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
     Set<char> visited(n);
     Map<char,int> dist(n);
     Map<char,char> predecessor(EDGES); // Map to track predecessors
+    path.removeAll();
 
     for(char i = 'A'; i <= 'Z'; i++)
         dist.insert(i, INT_MAX);

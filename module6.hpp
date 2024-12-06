@@ -8,18 +8,6 @@
 #include "functions.h"
 #include "module4.hpp"
 
-bool is_collision(Car& car1,Car& car2)
-{
-    // considering that the area of the car occupied in the visualization is 10, so detecting
-    // collisions accordingly
-
-    int area = 10;
-    double halfSideLength = std::sqrt(area) / 2.0;
-
-    // Check for overlap along both x and y axes
-    return (std::abs(car1.getX() - car2.getX()) <= 2 * halfSideLength) &&
-           (std::abs(car1.getY() - car2.getY()) <= 2 * halfSideLength);
-}
 
 void reRouteAllCars(Graph& matrix)
 {
@@ -27,25 +15,55 @@ void reRouteAllCars(Graph& matrix)
     // for each car in the graph/map call module 2 ka function
 }
 
-void block_routes(Graph& matrix, GraphNode& road)
+void block_routes(Graph& matrix,string& roadName)
 {
 
     // This will be the node stored in the linked list ith index, meaning the road from (i to road) is going to be blocked
     // the route where there is a road closure or accident, set travel time to INT_MAX
-    // returns the prev_value of the car
+    if(roadName.length() != 2)
+        return;
 
-    road.backup_value = road.travelTime;
-    road.travelTime = INT_MAX;
-    road.is_blocked = true;
-    reRouteAllCars(matrix);
+    char start = roadName[0];
+    char end = roadName[1];
+    if(matrix.get_Car_count(roadName) > 0)
+    {
+        cout << "Car " << roadName << " is not empty" << endl;
+        cout << "Cant block this route!\n";
+        return;
+    }
+    for (LinkedList<GraphNode>::Node* temp = matrix.adjacencyList[start - 'A'].getHead(); temp; temp = temp->next)
+    {
+        if(temp->data.targetIntersection == end)
+        {
+            temp->data.backup_value = temp->data.travelTime;
+            temp->data.travelTime = INT_MAX;
+            temp->data.is_blocked = true;
+            reRouteAllCars(matrix);
+            cout << "Rerouted All Cars\n";
+            return;
+        }
+    }
 }
 
-void unblock_route(Graph& matrix, GraphNode& road)
+void unblock_route(Graph& matrix, const string& roadName)
 {
-    road.travelTime = road.backup_value;
-    road.backup_value = 0;
-    road.is_blocked = false;
-    reRouteAllCars(matrix);
+    if(roadName.length() != 2)
+        return;
+
+    char start = roadName[0];
+    char end = roadName[1];
+    for (LinkedList<GraphNode>::Node* temp = matrix.adjacencyList[start - 'A'].getHead(); temp; temp = temp->next)
+    {
+        if(temp->data.targetIntersection == end && temp->data.is_blocked)
+        {
+            temp->data.travelTime = temp->data.backup_value;
+            temp->data.backup_value = 0;
+            temp->data.is_blocked = false;
+            reRouteAllCars(matrix);
+            cout << "Unblocked all routes and Rerouted All Cars\n";
+            return;
+        }
+    }
 }
 
 

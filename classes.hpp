@@ -223,6 +223,7 @@ public:
             delete temp;
             temp = next;
         }
+        top = nullptr;
     }
     void display()
     {
@@ -1059,7 +1060,7 @@ public:
 
             int childrenListIndex = ch - 'A';
 
-            for (LinkedList<GraphNode>::Node* curr = adjacencyList[childrenListIndex].getHead(); curr || !done; curr = curr->next) {
+            for (LinkedList<GraphNode>::Node* curr = adjacencyList[childrenListIndex].getHead(); curr && !done; curr = curr->next) {
                 char currentChar = curr->data.targetIntersection;
                 map.insert(currentChar, ch); // to keep track of papa beta relationship 
 
@@ -1099,6 +1100,11 @@ public:
         int d1 = startCoords.getFirst() - goalCoords.getFirst();
         int d2 = startCoords.getSecond() - goalCoords.getSecond();
         return sqrt(d1*d1 + d2*d2);
+    }
+
+    int get_Car_count(string& roadName)
+    {
+        return carCount[roadName];
     }
 
 };
