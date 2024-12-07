@@ -10,11 +10,46 @@
 #include <iostream>
 
 using namespace std;
+#include <chrono>
+#include <thread>
+#include <functional>
+#include <future>
+
+using namespace std;
+using namespace chrono;
 
 // Prototypes
 void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool shortest);
 void AStar(Graph& graph, char start, char goal, Stack<char>& path);
+void change_signals_state();
 // Dijkstra's Algorithm to find the shortest path from source to target
+
+void change_signals_state(int count,Graph& matrix) {
+    // Set up a timer to call this function again after 5 seconds (non-blocking)
+
+    // usage: call this function when the simulation process starts with main program thread t(change_signals_state, graph)
+    auto future = async(launch::async, [](){
+        this_thread::sleep_for(seconds(5));
+    });
+
+    // Wait for the timer to complete, then call the function again (recursive call)
+    future.wait(); // Wait for 5 seconds, then continue the loop
+    count += 5;
+    DynamicArr<char> keys = matrix.greenTime.getKeys();
+    for(int i = 0; i < keys.getSize() ; i++)
+    {
+        if(count % stoi(matrix.greenTime[keys[i]]) == 0)
+        {
+            // code to change the state of the signal
+            // you can set a boolean value in graphnode and shift its value like this:
+            // is_open = !is_open;
+            // what im having trouble thinking is that when we want to change the state, we must iterate though all the
+            // adjacency list and for every node leading to current block(intersection), we might have to change the state
+            // initially everything will be green, so boolean will always be set to true
+        }
+    }
+    change_signals_state(count,matrix);
+}
 
 void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool shortest = true)
 {
@@ -58,7 +93,7 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
                 
                 if (!shortest) {
                     std::string roadName = std::to_string(u) + v;
-                    weight_uv = graph.getRoadcarCount(roadName); // returns the weight that is now the traffic on the road
+                    weight_uv = graph.get_Car_count(roadName); // returns the weight that is now the traffic on the road
                     if (weight_uv == -1) // -1 is the default sentinel value
                     {
                      continue; 
@@ -153,5 +188,7 @@ void AStar(char start, char goal, Stack<char>& path, Graph& graph) {
     }
     path.push(start);  // Push the start node
 }
+
+
 
 #endif //FUNCTIONS_H

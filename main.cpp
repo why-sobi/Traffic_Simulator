@@ -63,6 +63,7 @@ int main() {
     // Initialize ncurses with additional setup
     initscr();            // Start curses mode
     cbreak();             // Line buffering disabled
+    curs_set(0);
     noecho();             // Don't echo() while we getch
     keypad(stdscr, TRUE); // We get F1, F2 etc..
 
@@ -72,7 +73,11 @@ int main() {
     // Create three windows with recommended sizes
     WINDOW* menu = newwin(10, 150, 0, 0);      // Window for Menu
     WINDOW* output = newwin(28, 150, 10, 0);   // window for output
-    
+    // if (menu == nullptr)
+    // {
+    //     std::cerr << "Error creating menu window!" << std::endl;
+    //     exit(1);  // Exit or handle gracefully
+    // }
     box(menu, 0, 0);
     box(output, 0, 0);
 

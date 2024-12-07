@@ -961,6 +961,7 @@ struct GraphNode
     int travelTime; // weight
     int heuristic_value;
     int backup_value;
+    bool
     std::string status;
 
 
@@ -1002,10 +1003,10 @@ class Graph
 {
     Map<string,int> carCount;
     Map<char,string> intersection_coordinates;
-    Map<char, std::string> greenTime;
-    LinkedList<Car> cars;
 public:
 
+    Map<char, std::string> greenTime;
+    LinkedList<Car> cars;
     LinkedList<GraphNode> adjacencyList[vertices];
     int vertexCount;
 
@@ -1033,11 +1034,6 @@ public:
     }
     void addCar(Car& car) {
         cars.insertAtEnd(car);
-    }
-
-    int getRoadcarCount(string n)
-    {
-        return carCount[n];
     }
 
     void displayGraph()
