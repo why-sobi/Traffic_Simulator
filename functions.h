@@ -24,6 +24,7 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
     Set<char> visited(n);
     Map<char,int> dist(n);
     Map<char,char> predecessor(EDGES); // Map to track predecessors
+    bool found = false;
     path.removeAll();
 
     for(char i = 'A'; i <= 'Z'; i++)
@@ -42,7 +43,10 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
 
         visited.insert(u); // Mark as visited
 
-        if (u == target) break; // If we reached the target, stop
+        if (u == target) {
+            found = true;
+            break; // If we reached the target, stop
+        }
 
         // Process all neighbors of u using a simple for loop
         for (LinkedList<GraphNode>::Node* temp = graph.adjacencyList[u - 'A'].getHead(); temp; temp = temp->next)
@@ -73,6 +77,10 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
             }
         }
     }
+    if (!found) {
+        return; // Exit early if no path was found
+    }
+
     // Reconstruct the path from target to source using predecessors
     char current = target;
     while (current != source)

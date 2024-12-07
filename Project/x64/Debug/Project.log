@@ -1,5 +1,3 @@
-﻿  main.cpp
-C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(18,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  (compiling source file 'main.cpp')
-  
-  Project.vcxproj -> C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\x64\Debug\Project.exe
+﻿main.obj : error LNK2019: unresolved external symbol initscr referenced in function main
+C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\\Dependencies\PDCurses-master\wincon\pdcurses.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\x64\Debug\Project.exe : fatal error LNK1120: 1 unresolved externals

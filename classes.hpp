@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <curses.h>
 
 using namespace std;
 
@@ -26,12 +27,18 @@ bool isPrime(int num) {
 
     return count == 1;
 }
-
 int getNextPrime(int num)
 {
     if (isPrime(num)) return num;
     while (!isPrime(num)) num++;
     return num;
+}
+bool isAlphaChar(std::string str) {
+    for (int i = 0; i < str.length(); i++)
+        if (str[i] < 'A' || str[i] > 'Z') {
+            return false;
+        }
+    return true;
 }
 
 template <typename T1, typename T2>
@@ -179,6 +186,10 @@ public:
     {
         removeAll();
     }
+    void moveOwnershipTo(Stack<T>& to) {
+        to.top = this->top;
+        this->top = nullptr;
+    }
     void push(T val)
     {
         if (top)
@@ -241,6 +252,7 @@ public:
         }
         cout << endl;
     }
+    StackNode<T>* getTop() { return top; }
 };
 
 template <typename T>
@@ -446,7 +458,15 @@ public:
 
         return current;
     }
-    void insertAtStart(T value)
+    Node* findNode(char val) {
+        for (Node* curr = head; curr; curr = curr->next) {
+            if (curr->data == val) {
+                return curr;
+            }
+        }
+        return nullptr;
+    }
+    void insertAtStart(T &value)
     {
 
         Node* newNode = new Node(value);
@@ -455,7 +475,7 @@ public:
         size++;
     }
 
-    void insertAtEnd(T value)
+    void insertAtEnd(T &value)
     {
 
         Node* newNode = new Node(value);
@@ -481,7 +501,7 @@ public:
         size++;
     }
 
-    void insertAtIndex(int index, T value)
+    void insertAtIndex(int index, T &value)
     {
 
         if (index < 0 || index > size)
@@ -638,20 +658,21 @@ public:
 class Car
 {
     std::string plate;
-    int x, y;
-    int velocity;
     int priority;
     char starting, ending;
     Stack<char> path;
 
 public:
     Car(int P = 0) : priority(P) {}
-    Car(std::string Plate, int X, int Y, int V, int P = 0) : plate(std::move(Plate)), x(X), y(Y), velocity(V), priority(P) {}
+    Car(std::string Plate, char Start, char End, Stack<char>& Path, int P = 0) : plate(std::move(Plate)), starting(Start), ending(End), priority(P) {
+        Path.moveOwnershipTo(path);
+    }
+    Car(Car& obj) {
+        *this = obj;
+        obj.path.moveOwnershipTo(this->path);
+    }
 
     // Getters
-    int getX() const { return x; }
-    int getY() const { return y; }
-    int getVelocity() const { return velocity; }
     int getPriority() const { return priority; }
     char getStarting() const { return starting; }
     char getEnding() const { return ending; }
@@ -659,9 +680,6 @@ public:
     Stack<char>& getPath() { return path; }
 
     // Setters
-    void setX(int X) { x = X; }
-    void setY(int Y) { y = Y; }
-    void setVelocity(int V) { velocity = V; }
     void setPlate(const std::string& Plate) { plate = Plate; }
 
     // Operator overload
@@ -678,6 +696,17 @@ public:
     bool operator==(const Car& obj) const
     {
         return this->priority == obj.priority;
+    }
+
+    // Util Functions
+    void printPath(WINDOW*& path_win, int x, int y) {
+        /*mvwprintw(path_win, y, x, "%s with priority: %s", plate.c_str(), std::to_string(priority).c_str());
+        x += 22;*/
+        mvwprintw(path_win, y, x, "%s ", plate.c_str());
+        x += 5;
+        for (StackNode<char>* curr = path.getTop(); curr; curr = curr->next, x += 2) {
+            mvwprintw(path_win, y, x, "%c ", curr->data);
+        }
     }
 };
 
@@ -823,8 +852,6 @@ class Map
     int hashFunction(char ch) { return (int(ch) * 7) % size; }
     int linearProbe(int index) { return (index + 1) % size; }
 
-
-
 public:
     Map(int s)
     {
@@ -918,7 +945,13 @@ public:
     }
 
     int getSize(){ return size; }
-
+    DynamicArr<T> getKeys() {
+        DynamicArr<T> keys_val;
+        for (int i = 0; i < size; i++) {
+            if (!checkDefault(key[i])) keys_val.push(key[i]);
+        }
+        return keys_val;
+    }
 
 };
 
@@ -927,9 +960,11 @@ struct GraphNode
     char targetIntersection;
     int travelTime; // weight
     int heuristic_value;
-    bool is_blocked;
     int backup_value;
-    GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time), heuristic_value(INT_MAX), is_blocked(false), backup_value(0)
+    std::string status;
+
+
+    GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time), heuristic_value(INT_MAX), status("Clear"), backup_value(0)
     {}
 
     friend ostream& operator << (ostream& out, GraphNode& obj)
@@ -952,6 +987,14 @@ struct GraphNode
         return this->travelTime == obj.travelTime;
     }
 
+    bool operator == (char at) const {
+        return this->targetIntersection == at;
+    }
+
+    friend std::ostream& operator << (std::ostream& out, const GraphNode& obj) {
+        out << obj.targetIntersection;
+        return out;
+    }
 };
 
 // Graph Class to manage intersections and roads
@@ -959,12 +1002,14 @@ class Graph
 {
     Map<string,int> carCount;
     Map<char,string> intersection_coordinates;
+    Map<char, std::string> greenTime;
+    LinkedList<Car> cars;
 public:
 
     LinkedList<GraphNode> adjacencyList[vertices];
     int vertexCount;
 
-    Graph(): carCount(CARS), intersection_coordinates(vertices)
+    Graph(): carCount(CARS), intersection_coordinates(vertices), greenTime(CONSTANTS::vertices)
     {
         vertexCount = vertices;
     }
@@ -985,6 +1030,9 @@ public:
         
         GraphNode newNode(to, travelTime);
         adjacencyList[fromIndex].insertAtStart(newNode);
+    }
+    void addCar(Car& car) {
+        cars.insertAtEnd(car);
     }
 
     int getRoadcarCount(string n)
@@ -1028,16 +1076,7 @@ public:
         }
         file.close();
     }
-
-    void initialize_coordinates()
-    {
-        for(char a = 'A'; a <= 'Z'; a++)
-        {
-            intersection_coordinates.insert(a," ");
-        }
-    }
-
-    void load_coordinates(const string &filename = "csv/intersection.csv")
+    void load_coordinates(const string& filename = "csv/intersection.csv")
     {
         ifstream file(filename);
         if (!file.is_open())
@@ -1059,10 +1098,65 @@ public:
         }
         file.close();
     }
+    void readRoadSituations(const string& filename = "csv/road_closures.csv") {
+        ifstream file(filename);
+        if (!file.is_open())
+        {
+            cout << "Error opening file!" << endl;
+            return;
+        }
 
+        string line;
+        getline(file, line); // skipping the first line
+
+        while (getline(file, line))
+        {
+            stringstream ss(line);
+            string intersection, intersection2, status;
+            getline(ss, intersection, ',');
+            getline(ss, intersection2, ',');
+            getline(ss, status);
+
+            std::string road = intersection + intersection2;
+            if (road.length() == 2)
+                setRoadSituation(road, status);
+        }
+        file.close();
+    }
+    void readGreenTime(const string& filename = "csv/traffic_signals.csv") {
+        ifstream file(filename);
+        if (!file.is_open())
+        {
+            cout << "Error opening file!" << endl;
+            return;
+        }
+
+        string line;
+        getline(file, line); // skipping the first line
+
+        while (getline(file, line))
+        {
+            stringstream ss(line);
+            string intersection, time;
+            getline(ss, intersection, ',');
+            getline(ss, time);
+
+            greenTime.insert(intersection[0], time);
+        }
+        file.close();
+    }
+    
+
+    // Graph setup functions
+    void initialize_coordinates()
+    {
+        for(char a = 'A'; a <= 'Z'; a++)
+        {
+            intersection_coordinates.insert(a," ");
+        }
+    }
     void set_coordinates_of_intersection()
     {
-        //const std::vector<std::tuple<std::string, std::string, double>>& edges, std::map<std::string, Point>& coordinates
         initialize_coordinates();
         intersection_coordinates['A']= "0,0";
         // Iterate through edges and calculate coordinates
@@ -1075,19 +1169,29 @@ public:
                 int weight = temp->data.travelTime;
                 if(intersection_coordinates[start] != "")
                 {
-                    Pair p = get_coordinates(start);
+                    Pair<int,int> p = get_coordinates(start);
                     intersection_coordinates[end] = to_string(p.getFirst() + weight) +","+ to_string(p.getSecond());
                 }
                 else if(intersection_coordinates[end] != "")
                 {
-                    Pair p = get_coordinates(end);
+                    Pair<int, int> p = get_coordinates(end);
                     intersection_coordinates[start] = to_string(p.getFirst() - weight) +","+ to_string(p.getSecond());
                 }
             }
         }
         intersection_coordinates.print();
     }
-    void BFSpathFinding(char source, char goal, Stack<char>& path) {
+    int heuristic(char start, char goal)
+    {
+        Pair<int, int> startCoords = get_coordinates(start);
+        Pair<int, int> goalCoords = get_coordinates(goal);
+        int d1 = startCoords.getFirst() - goalCoords.getFirst();
+        int d2 = startCoords.getSecond() - goalCoords.getSecond();
+        return sqrt(d1 * d1 + d2 * d2);
+    }
+
+    // Algos
+    void BFSpathFinding(char source, char goal, Stack<char>& path) const {
         Queue<char> q;
         Set<char> visited(vertices); // as their are at max 26 vertices, closest prime number is 31
         Map<char, char> map(vertices);
@@ -1129,27 +1233,146 @@ public:
         path.push(source);
     }
 
-    Pair<int,int> get_coordinates(char intersection)
+    // Setter/Getters/Utils
+    Pair<int, int> get_coordinates(char intersection)
     {
         string coords = intersection_coordinates[intersection];
         int pos = coords.find(',');
         int x = stoi(coords.substr(0, pos));
         int y = stoi(coords.substr(pos + 1));
-        return Pair(x,y);
+        return Pair<int, int>(x, y);
     }
-
-    int heuristic(char start,char goal)
-    {
-        Pair<int,int> startCoords = get_coordinates(start);
-        Pair<int,int> goalCoords = get_coordinates(goal);
-        int d1 = startCoords.getFirst() - goalCoords.getFirst();
-        int d2 = startCoords.getSecond() - goalCoords.getSecond();
-        return sqrt(d1*d1 + d2*d2);
-    }
-
     int get_Car_count(string& roadName)
     {
         return carCount[roadName];
+    }
+    void setRoadSituation(std::string roadName, std::string status) {
+        LinkedList<GraphNode>::Node* found = adjacencyList[roadName[0] - 'A'].findNode(roadName[1]);
+        if (found) {
+            found->data.status = status;
+        }
+    }
+    std::string getRoadSituation(std::string roadName) {
+        LinkedList<GraphNode>::Node* found = adjacencyList[roadName[0] - 'A'].findNode(roadName[1]);
+        if (found == nullptr) return "None";
+        return found->data.status;
+    }
+    void blockRoad(WINDOW*& output) {
+        wclear(output);
+        box(output, 0, 0);
+
+        int col = 19;
+        mvwprintw(output, 1, 1, "Enter Road Name: ");
+        wrefresh(output);
+
+        std::string roadName = "";
+        char ch;
+
+        while ((ch = getch()) != '\n')
+        {
+            mvwprintw(output, 1, col++, "%c", ch);
+            roadName += ch;
+            wrefresh(output);
+        }
+
+        if (roadName.length() != 2 || !isAlphaChar(roadName)) {
+            mvwprintw(output, 2, 1, "Road doesn't exist!");
+            wrefresh(output);
+            return;
+        }
+
+        LinkedList<GraphNode>::Node* found = adjacencyList[roadName[0] - 'A'].findNode(roadName[1]);
+        if (found) {
+            found->data.status = "Blocked";
+            printRoadStatus(output);
+        }
+
+        return;
+
+    }
+
+    // printing functions
+    void printIntersections(WINDOW*& roads) {
+        wclear(roads);
+        box(roads, 0, 0);
+
+        for (int i = 0; i < CONSTANTS::vertices; i++) {
+            char intersection = ('A' + i);
+            mvwprintw(roads, i + 1, 1, "%c leads to ", intersection);
+            int x = 12;
+            for (LinkedList<GraphNode>::Node* curr = adjacencyList[i].getHead(); curr; curr = curr->next, x += 7) {
+                char ch = curr->data.targetIntersection;
+                std::string weight = std::to_string(curr->data.travelTime);
+                mvwprintw(roads, i + 1, x, "(%c,%s) ", ch, weight.c_str());
+            }
+        }
+        wrefresh(roads);
+    }
+    void printCarPaths(WINDOW*& path_win) {
+        wclear(path_win);
+        box(path_win, 0, 0);
+
+        int row = 1;
+        int col = 1;
+        
+        for (LinkedList<Car>::Node* curr = cars.getHead(); curr; curr = curr->next) {
+            curr->data.printPath(path_win, col, row);
+            col += 26;
+            if (col > 100) {
+                col = 1;
+                row++;
+            }
+        }
+        wrefresh(path_win);
+    }
+    void printRoadStatus(WINDOW*& output) {
+        wclear(output);
+        box(output, 0, 0);
+
+        int row = 1, col = 1;
+        DynamicArr<std::string> keys = carCount.getKeys();
+        for (int i = 0; i < keys.getSize(); i++) {
+            mvwprintw(output, row, col, "Road %s: %s", keys[i].c_str(), getRoadSituation(keys[i]).c_str());
+            col += 40;
+            if (col > 121) {
+                col = 1;
+                row++;
+            }
+        }
+        wrefresh(output);
+    }
+    void printCongestionStatus(WINDOW*& output) {
+        wclear(output);
+        box(output, 0, 0);
+
+        int row = 1, col = 1;
+        DynamicArr<std::string> keys = carCount.getKeys();
+        for (int i = 0; i < keys.getSize(); i++) {
+            std::string vNumber = std::to_string(carCount[keys[i]]);
+            mvwprintw(output, row, col, "Road %s has %s Vehicles!", keys[i].c_str(), vNumber.c_str());
+            col += 40;
+            if (col > 121) {
+                col = 1;
+                row++;
+            }
+        }
+
+        wrefresh(output);
+    }
+    void printGreenLightTime(WINDOW*& output) {
+        wclear(output);
+        box(output, 0, 0);
+
+        int row = 1, col = 1;
+        for (char ch = 'A'; ch <= 'Z'; ch++) {
+            mvwprintw(output, row, col, "Intersection %c stays Green for %ss", ch, greenTime[ch].c_str());
+            col += 50;
+            if (col > 101) {
+                col = 1;
+                row++;
+            }
+        }
+        wrefresh(output);
     }
 
 };
