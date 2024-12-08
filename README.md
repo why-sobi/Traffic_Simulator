@@ -18,5 +18,47 @@ Dynamically blocks roads and updates vehicle routes during disruptions.
 - **Simulation Dashboard**:  
 Visualizes traffic flow, congestion, and system actions with manual control options.
 
-## Instructions:
-Open the project.sln file in your visual studio and use debugger to run code.
+## Structures Used  
+- *Graphs*
+- *Heaps*
+- *Priority queues*
+- *Linked lists*
+- *Stacks*
+
+## Main Functions
+### 1. Dijkstra Function
+**Purpose**:  
+Finds the shortest or least congested path between two nodes in a graph using Dijkstra's Algorithm.
+
+**Parameters**:
+- char source: Starting intersection.  
+- char target: Target intersection.  
+- Stack<char>& path: Stack to store the reconstructed path.  
+- Graph& graph: Graph representation of the city.  
+- bool shortest: Flag to determine if the algorithm uses shortest distance (true) or fastest (false).  
+Key Features:
+
+Initializes distances to all nodes as INT_MAX, except the source, which is set to 0.
+Uses a MinHeap as a priority queue for efficiency.
+Tracks visited nodes to avoid revisiting.
+Updates the distance and predecessor if a shorter path is found.
+Reconstructs the path from target to source using the predecessor map.  
+  
+### 2. AStar Function  
+**Purpose**:  
+Calculates the fastest route between two nodes using the A* (A-Star) search algorithm.
+
+**Parameters**:  
+
+- char start: Starting intersection.
+- char goal: Target intersection.
+- Stack<char>& path: Stack to store the reconstructed path.
+- Graph& graph: Graph representation of the city.
+Key Features:  
+
+Uses both g(n) (cost from start to current node) and h(n) (heuristic estimate to the goal) to calculate f(n) = g(n) + h(n).
+Employs a MinHeap to prioritize nodes with the lowest f(n).
+Tracks visited nodes and predecessors for path reconstruction.
+Continuously updates the g(n) and f(n) values as shorter paths are found.
+Stops when the goal is reached.
+Reconstructs the path from goal to start using the predecessor map.
