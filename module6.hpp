@@ -20,12 +20,17 @@ void block_routes(Graph& matrix,string& roadName,WINDOW*& output)
     // This will be the node stored in the linked list ith index, meaning the road from (i to road) is going to be blocked
     // the route where there is a road closure or accident, set travel time to INT_MAX
 
+    wclear(output);
+    box(output, 0, 0);
+
+    int x = 1, y = 1;
     char start = roadName[0];
     char end = roadName[1];
     if(matrix.get_Car_count(roadName) > 0)
     {
-        cout << "Car " << roadName << " is not empty" << endl;
-        cout << "Cant block this route!\n";
+        mvwprintw(output, y, x, "Road %s is not empty hence cannot block it right now!", roadName.c_str());
+        ++y;
+        wrefresh(output);
         return;
     }
     for (LinkedList<GraphNode>::Node* temp = matrix.adjacencyList[start - 'A'].getHead(); temp; temp = temp->next)
@@ -36,16 +41,22 @@ void block_routes(Graph& matrix,string& roadName,WINDOW*& output)
             temp->data.travelTime = INT_MAX;
             temp->data.status = "Blocked";
             reRouteAllCars(matrix);
-            cout << "Rerouted All Cars\n";
+            mvwprintw(output, y, x, "Rerouted all cars!");
             return;
         }
     }
+
+    wrefresh(output);
 }
 
 void unblock_route(Graph& matrix, const string& roadName,WINDOW*& output)
 {
     if(roadName.length() != 2)
         return;
+
+
+    wclear(output);
+    box(output, 0, 0);
 
     char start = roadName[0];
     char end = roadName[1];
@@ -57,10 +68,12 @@ void unblock_route(Graph& matrix, const string& roadName,WINDOW*& output)
             temp->data.backup_value = 0;
             temp->data.status = "Clear";
             reRouteAllCars(matrix);
+            mvwprintw(output, 1, 1, "Unblocked all routes and Rerouted All Cars");
             cout << "Unblocked all routes and Rerouted All Cars\n";
             return;
         }
     }
+    wrefresh(output);
 }
 
 #endif //MODULE6_HPP

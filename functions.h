@@ -40,7 +40,7 @@ void change_car_state(int count,Graph& matrix)
 {
     for (LinkedList<Car*>::Node* curr = matrix.cars.getHead(); curr; curr = curr->next)
     {
-        int new_time = curr->data->getStarting() - count;
+        int new_time = curr->data->getCurrentTime() - count;
         if(new_time <= 0)
             change_direction(matrix,curr->data);
         else
@@ -54,11 +54,16 @@ void change_direction(Graph& matrix,Car*& car)
 {
     string curr_path = "";
     curr_path += car->getStarting();
+    if (car->getPath().isEmpty()) { return;  }
+    
     curr_path += car->getPath().topNode();
     if (car->getPriority() == 0 && !matrix.greenTime[curr_path[1]].getFirst())
         return;
+
     matrix.carCount[curr_path].delete_object(car);
     car->setStarting(car->getPath().pop());
+    
+    if (car->getPath().isEmpty()) return;
     curr_path = "";
     curr_path += car->getStarting();
     curr_path += car->getPath().topNode();

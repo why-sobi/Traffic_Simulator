@@ -1245,44 +1245,7 @@ public:
             adjacencyList[i].display();
         }
     }
-
-    void print_path_and_weight()
-    {
-        for (LinkedList<Car*>::Node* temp = cars.getHead(); temp; temp = temp->next)
-        {
-            int weight = get_weight_of_path(temp->data->getPath().getTop());
-            cout << weight << " ";
-            if(temp->data->getPath().isEmpty())
-            {
-                cout << "Reached!" << endl;
-                return;
-            }
-            StackNode<char>* temp_stack = temp->data->getPath().getTop();
-            cout << "Path: ";
-            while (temp_stack)
-            {
-                cout << temp_stack->data << " ";
-                temp_stack = temp_stack->next;
-            }
-            cout << endl;
-        }
-    }
-
-    int get_weight_of_path(StackNode<char>* path)
-    {
-        string roadName = "";
-        StackNode<char>* temp = path;
-        roadName += temp->data;
-        temp = temp->next;
-        int weight = 0;
-        for(; temp; temp = temp->next)
-        {
-            roadName += temp->data;
-            weight += get_road_weight(roadName);
-            roadName = roadName[0];
-        }
-        return weight;
-    }
+    
     // Load graph from a CSV file
     void loadFromCSV(const string &filename)
     {
@@ -1497,7 +1460,10 @@ public:
     int get_road_weight(std::string roadName)
     {
         LinkedList<GraphNode>::Node* found = adjacencyList[roadName[0] - 'A'].findNode(roadName[1]);
-        return found->data.travelTime;
+        if (found)
+            return found->data.travelTime;
+        else
+            return -1;
     }
 
     // printing functions

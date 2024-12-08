@@ -5,6 +5,13 @@
 #include "functions.h"
 #include "module6.hpp"
 
+void printPath(WINDOW*& path_win, Stack<char>& path, int x, int y) {
+    /*mvwprintw(path_win, y, x, "%s with priority: %s", plate.c_str(), std::to_string(priority).c_str());
+    x += 22;*/
+    for (StackNode<char>* curr = path.getTop(); curr; curr = curr->next, x += 2) {
+        mvwprintw(path_win, y, x, "%c ", curr->data);
+    }
+}
 
 void readAndAddCars(Graph& graph, const string& filename) {
     std::ifstream file(filename);
@@ -119,7 +126,39 @@ int main() {
             graph.printRoadStatus(output);
             break;
         case '5':
-            // gotta write
+        {
+            char start, end;
+            wclear(output);
+            box(output, 0, 0);
+
+            mvwprintw(output, 1, 1, "Please Enter Starting Node: ");
+            wrefresh(output);
+
+            start = getch();
+            mvwprintw(output, 1, 30, "%c", start);
+            wrefresh(output);
+
+            mvwprintw(output, 2, 1, "Please Enter Ending Node: ");
+            wrefresh(output);
+
+            end = getch();
+            mvwprintw(output, 2, 29, "%c", end);    
+            wrefresh(output);
+
+            Stack<char> path;
+            AStar(start, end, path, graph);
+
+            if (path.isEmpty()) {
+                mvwprintw(output, 3, 29, "No Path was Found!");
+                wrefresh(output);
+            }
+            else {
+                wclear(output);
+                box(output, 0, 0);
+                printPath(output, path, 1, 1);
+                wrefresh(output);
+            }
+        }
             break;
 
         case '6':

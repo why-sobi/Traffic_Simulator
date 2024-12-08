@@ -7,6 +7,18 @@
       "RelativeMoniker": "D:0:0:{45362B37-79AD-4E0F-A123-952DA4A1FEA5}|Project.vcxproj|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{45362B37-79AD-4E0F-A123-952DA4A1FEA5}|Project.vcxproj|C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\classes.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{45362B37-79AD-4E0F-A123-952DA4A1FEA5}|Project.vcxproj|solutionrelative:classes.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45362B37-79AD-4E0F-A123-952DA4A1FEA5}|Project.vcxproj|C:\\USERS\\SHADOWS BOX\\DOCUMENTS\\SEM3\\DATA-STRUCTURES\\REPO\\WHY-SOBI\\TRAFFIC_SIMULATOR\\MODULE6.HPP||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{45362B37-79AD-4E0F-A123-952DA4A1FEA5}|Project.vcxproj|solutionrelative:MODULE6.HPP||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45362B37-79AD-4E0F-A123-952DA4A1FEA5}|Project.vcxproj|C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\functions.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{45362B37-79AD-4E0F-A123-952DA4A1FEA5}|Project.vcxproj|solutionrelative:functions.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{45362B37-79AD-4E0F-A123-952DA4A1FEA5}|Project.vcxproj|C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\module5.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{45362B37-79AD-4E0F-A123-952DA4A1FEA5}|Project.vcxproj|solutionrelative:module5.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
@@ -18,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -26,7 +38,46 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "module6.hpp",
+              "DocumentMoniker": "C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\module6.hpp",
+              "RelativeDocumentMoniker": "module6.hpp",
+              "ToolTip": "C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\module6.hpp",
+              "RelativeToolTip": "module6.hpp",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAAACkAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-08T18:28:57.308Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "functions.h",
+              "DocumentMoniker": "C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\functions.h",
+              "RelativeDocumentMoniker": "functions.h",
+              "ToolTip": "C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\functions.h",
+              "RelativeToolTip": "functions.h",
+              "ViewState": "AgIAADIAAAAAMzMzMzP7v0cAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-08T18:09:29.066Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "classes.hpp",
+              "DocumentMoniker": "C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\classes.hpp",
+              "RelativeDocumentMoniker": "classes.hpp",
+              "ToolTip": "C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\classes.hpp",
+              "RelativeToolTip": "classes.hpp",
+              "ViewState": "AgIAAGkDAACAmZmZmZkuwIMDAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-12-08T18:05:08.097Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "module5.hpp",
               "DocumentMoniker": "C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\module5.hpp",
               "RelativeDocumentMoniker": "module5.hpp",
@@ -34,8 +85,7 @@
               "RelativeToolTip": "module5.hpp",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAA8AAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-08T16:37:56.53Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-08T16:37:56.53Z"
             },
             {
               "$type": "Document",
@@ -45,7 +95,7 @@
               "RelativeDocumentMoniker": "main.cpp",
               "ToolTip": "C:\\Users\\shadows box\\Documents\\SEM3\\Data-Structures\\repo\\why-sobi\\Traffic_Simulator\\main.cpp",
               "RelativeToolTip": "main.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIAAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAGcAAAAANDMzMzMLwJ8AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-12-08T16:36:50.283Z",
               "EditorCaption": ""

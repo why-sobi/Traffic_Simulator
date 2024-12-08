@@ -1,0 +1,192 @@
+[33mcommit c26bb1114eb39ed48a1a805f669f99a9ab0000fa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Sun Dec 8 21:41:23 2024 +0500
+
+    Final Touches
+
+[33mcommit fd67df296e424e81560b83e4efa2b45dea5f4492[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sun Dec 8 21:34:33 2024 +0500
+
+    Final Touches
+
+[33mcommit 2911df2fb7e7411a212da1e380882f16ba51c2e3[m
+Merge: de9ad24 98bb833
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sun Dec 8 21:15:17 2024 +0500
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit de9ad2483e2c3b0ce9b499f62da501a2d1f90142[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sun Dec 8 21:14:47 2024 +0500
+
+    Final Touches
+
+[33mcommit 98bb83362fa857dd11dfe0a186454a1b1fb87c1e[m
+Author: Ahsan <ahsansps.rwp@gmail.com>
+Date:   Sun Dec 8 20:26:27 2024 +0500
+
+    Update README.md
+
+[33mcommit 48afba795447275ce6d021e6a70d835ea4ab32de[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Sun Dec 8 14:43:00 2024 +0500
+
+    Added time related Functionality
+
+[33mcommit a54afd212f5bf49b2610e9dfbf52e2cfc8b36213[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sun Dec 8 13:29:43 2024 +0500
+
+    Added traffic signals functions and fixed some other code
+
+[33mcommit 89e3e8a3b5529976dca7051a304d1f9e14fb2c7d[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sun Dec 8 02:42:38 2024 +0500
+
+    Added traffic signals functions and fixed some other code
+
+[33mcommit 50c130e8382977fbd9a6d2a94651926ad4fef90a[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Sat Dec 7 22:01:20 2024 +0500
+
+    menu interface
+
+[33mcommit 5f4caa738fd20c63438f27590df6ccbfd6287803[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sat Dec 7 02:07:39 2024 +0500
+
+    Fixing X,y coords for heuristic function for A*
+
+[33mcommit 9f19200f836b5b181a82cea9393455b9094c965a[m
+Author: Ahsan <ahsansps.rwp@gmail.com>
+Date:   Fri Dec 6 20:35:27 2024 +0500
+
+    Route recalculation and few changes
+    
+    -Recalculation of routes using dijkstra and A*
+
+[33mcommit 9d7307d6876e2dbcaa9ba2d0297434339070ec3b[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Fri Dec 6 08:19:21 2024 +0500
+
+    Implemented Module 5 and Module 6
+
+[33mcommit 1ae88f3f401ae8b1b6650367bc840091ca72ba92[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Thu Dec 5 00:10:16 2024 +0500
+
+    Implemented Module 5 and Module 6
+
+[33mcommit 336b5c930fadbd17192c9a7bd32efe827c96cff0[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Mon Dec 2 03:28:26 2024 +0500
+
+    Implemented A* Search, added some extra classes, also added a coordinates csv file.
+
+[33mcommit 30d3c96ba0386e86e827914d449406464ab21de7[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Sun Dec 1 23:56:13 2024 +0500
+
+    Module 4, Dj, Class Update
+
+[33mcommit db6cb41e407b092c9d840f4a8942ec6f6c7da256[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sun Dec 1 22:25:24 2024 +0500
+
+    Optimised Dijkstra and added some class features
+
+[33mcommit bf722841e3987ab63c1c4cf33288c405ae6d15e9[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sun Dec 1 20:44:41 2024 +0500
+
+    Optimised Dijkstra
+
+[33mcommit fff0fdeb2e99baed55cbc113d079823efa54c96a[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Sun Dec 1 18:20:13 2024 +0500
+
+    Pseudo Algo implementation
+
+[33mcommit 5dab444a233f35e875b7c3e26cc62de91ae4e18b[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sat Nov 30 21:08:16 2024 +0500
+
+    Completed Dijkstra phew..
+
+[33mcommit 6b99615a4bf4070f106b1f7c61060330ce44414a[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sat Nov 30 21:04:19 2024 +0500
+
+    Completed Dijkstra phew..
+
+[33mcommit 363911aa7248bac14720a7052cc18c0e4f4f185d[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sat Nov 30 15:50:39 2024 +0500
+
+    Dijkstra Algo is yet to be corrected but there are other changes done in the file.
+
+[33mcommit 2b86174c58c98999e182eb1210ba4ada6b87b3d0[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Sat Nov 30 13:42:28 2024 +0500
+
+    Updated Classes
+
+[33mcommit 06ed3c587a161054cd4c10add538b8bd649eceb4[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Sat Nov 30 12:49:26 2024 +0500
+
+    Dijkstra Algo is yet to be corrected but there are other changes done in the file.
+
+[33mcommit bce17d957b63073e85ff815058de9d0165a4baa2[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Sat Nov 30 12:46:22 2024 +0500
+
+    Files Updated
+
+[33mcommit 66469aac6ba7bc7fc30706c4a70c10bca64e164c[m
+Author: Ahsan <ahsansps.rwp@gmail.com>
+Date:   Sat Nov 30 00:09:13 2024 +0500
+
+    Road Network implementation
+    
+    -Stored the data from road network csv  in a graph
+
+[33mcommit 491753d99cdae07983f0a80116d8cc7cbeb5ade2[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Fri Nov 29 17:24:35 2024 +0500
+
+    Dijkstra Algo is yet to be corrected but there are other changes done in the file.
+
+[33mcommit c8767a5f5beb81b8e27d6ebf671ae5aaf24bc885[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Thu Nov 28 19:02:23 2024 +0500
+
+    Adding functions.h
+
+[33mcommit 857adf5c92e9baff505383a99a39b905f60032d1[m
+Author: ssgali <alirauf660@gmail.com>
+Date:   Thu Nov 28 17:47:18 2024 +0500
+
+    Adding CSV's and Dependencies
+
+[33mcommit f58d9071e5e6c8327f247a3116b0a2a1c9b2bac9[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Thu Nov 28 15:04:32 2024 +0500
+
+    Uploading Folders
+
+[33mcommit a99ee748765473269e2b4f7aeb5a1c7156382b29[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Thu Nov 28 09:53:39 2024 +0000
+
+    Add files via upload
+    
+    Uploading Initial Files
+
+[33mcommit 5815ce975d9363127afe0644c1974827da2bc503[m
+Author: why-sobi <sobisoban05@gmail.com>
+Date:   Thu Nov 28 14:51:45 2024 +0500
+
+    Initial commit
