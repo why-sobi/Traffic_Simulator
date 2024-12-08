@@ -1,11 +1,9 @@
-#include "classes.hpp"
 #include <iostream>
 #include <string>
+#include <chrono>
+#include "classes.hpp"
 #include "functions.h"
-#include <cstdlib>
-#include <ctime>
-//#include <curses.h>
-using namespace std;
+
 
 void readAndAddCars(Graph& graph, const string& filename) {
     std::ifstream file(filename);
@@ -78,7 +76,7 @@ int main() {
         std::cerr << "Error creating menu window!" << std::endl;
         exit(1);  // Exit or handle gracefully
     }
-    box(menu, 0, 0);
+    box(menu, 0, 0); // outline screen 
     box(output, 0, 0);
 
     wrefresh(menu);
@@ -88,6 +86,9 @@ int main() {
     
     char ch = 'A';
     bool end = false;
+    
+    auto start = std::chrono::high_resolution_clock::now(); // to keep check how many seconds have passed
+
     while (!end) {
         ch = getch();
         switch (ch) {
@@ -116,6 +117,13 @@ int main() {
         case '8':
             end = true;
             break;
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        auto time_passed = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+        start = end;
+        
+        if (time_passed.count() >= 1) {
+            change_signals_state(time_passed.count(), graph);
         }
     }
     delwin(menu);

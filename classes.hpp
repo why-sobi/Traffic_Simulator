@@ -55,11 +55,11 @@ public:
     Pair(T1 f, T2 s) : first(f), second(s) {}
 
     // Getter methods
-    T1 getFirst() const {
+    T1& getFirst()  {
         return first;
     }
 
-    T2 getSecond() const {
+    T2& getSecond()  {
         return second;
     }
 
@@ -963,7 +963,6 @@ struct GraphNode
     int backup_value;
     std::string status;
 
-
     GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time), heuristic_value(INT_MAX), status("Clear"), backup_value(0)
     {}
 
@@ -1001,15 +1000,15 @@ struct GraphNode
 class Graph
 {
     Map<string,int> carCount;
-    Map<char,string> intersection_coordinates;
+    /*Map<char,string> intersection_coordinates;*/
 public:
 
-    Map<char, std::string> greenTime;
+    Map<char, Pair<bool, Pair<int, int>>> greenTime; 
     LinkedList<Car> cars;
     LinkedList<GraphNode> adjacencyList[vertices];
     int vertexCount;
 
-    Graph(): carCount(CARS), intersection_coordinates(vertices), greenTime(CONSTANTS::vertices)
+    Graph(): carCount(CARS), /*intersection_coordinates(vertices),*/ greenTime(CONSTANTS::vertices)
     {
         vertexCount = vertices;
     }
@@ -1071,7 +1070,7 @@ public:
         }
         file.close();
     }
-    void load_coordinates(const string& filename = "csv/intersection.csv")
+    /*void load_coordinates(const string& filename = "csv/intersection.csv")
     {
         ifstream file(filename);
         if (!file.is_open())
@@ -1092,7 +1091,7 @@ public:
             intersection_coordinates.insert(intersection[0], intersection2);
         }
         file.close();
-    }
+    }*/
     void readRoadSituations(const string& filename = "csv/road_closures.csv") {
         ifstream file(filename);
         if (!file.is_open())
@@ -1136,7 +1135,10 @@ public:
             getline(ss, intersection, ',');
             getline(ss, time);
 
-            greenTime.insert(intersection[0], time);
+            Pair<int, int> timeInfo(std::stoi(time), std::stoi(time)); // time left, default time period
+            Pair<bool, Pair<int, int>> intersectionInfo(true, timeInfo); // not 1 because computational cost
+
+            greenTime.insert(intersection[0], intersectionInfo);
         }
         file.close();
     }
@@ -1203,14 +1205,14 @@ public:
     }
 
     // Setter/Getters/Utils
-    Pair<int, int> get_coordinates(char intersection)
+    /*Pair<int, int> get_coordinates(char intersection)
     {
         string coords = intersection_coordinates[intersection];
         int pos = coords.find(',');
         int x = stoi(coords.substr(0, pos));
         int y = stoi(coords.substr(pos + 1));
         return Pair<int, int>(x, y);
-    }
+    }*/
     int get_Car_count(string& roadName)
     {
         return carCount[roadName];
@@ -1334,7 +1336,13 @@ public:
 
         int row = 1, col = 1;
         for (char ch = 'A'; ch <= 'Z'; ch++) {
-            mvwprintw(output, row, col, "Intersection %c stays Green for %ss", ch, greenTime[ch].c_str());
+            int timeLeft = greenTime[ch].getSecond().getFirst(); // greenTime[ch].getSecond() returns a Pair<int, int>
+            if (greenTime[ch].getFirst()) {
+                mvwprintw(output, row, col, "Intersection %c green for %d s", ch, timeLeft);
+            }
+            else {
+                mvwprintw(output, row, col, "Intersection %c red for %d s", ch, timeLeft);
+            }
             col += 50;
             if (col > 101) {
                 col = 1;

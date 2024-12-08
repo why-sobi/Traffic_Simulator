@@ -5,20 +5,22 @@ C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simula
 C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(37,23): warning C4018: '<': signed/unsigned mismatch
   (compiling source file 'main.cpp')
   
-C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(1190,20): warning C4244: 'return': conversion from 'double' to 'int', possible loss of data
-  (compiling source file 'main.cpp')
-  
+C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\main.cpp(126,51): warning C4244: 'argument': conversion from '_Rep' to 'int', possible loss of data
+C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\main.cpp(126,51): warning C4244:         with
+C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\main.cpp(126,51): warning C4244:         [
+C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\main.cpp(126,51): warning C4244:             _Rep=__int64
+C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\main.cpp(126,51): warning C4244:         ]
 C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(847,27): warning C4018: '<': signed/unsigned mismatch
   (compiling source file 'main.cpp')
       C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(847,27):
       the template instantiation context (the oldest one first) is
-          C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(1003,21):
+          C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(1002,21):
           see reference to class template instantiation 'Map<std::string,int>' being compiled
           C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(844,9):
           while compiling class template member function 'int Map<std::string,int>::hashFunction(std::string)'
               C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(923,19):
               see the first reference to 'Map<std::string,int>::hashFunction' in 'Map<std::string,int>::operator []'
-              C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(1040,9):
-              see the first reference to 'Map<std::string,int>::operator []' in 'Graph::getRoadcarCount'
+              C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\classes.hpp(1218,9):
+              see the first reference to 'Map<std::string,int>::operator []' in 'Graph::get_Car_count'
   
   Project.vcxproj -> C:\Users\shadows box\Documents\SEM3\Data-Structures\repo\why-sobi\Traffic_Simulator\Debug\Project.exe
