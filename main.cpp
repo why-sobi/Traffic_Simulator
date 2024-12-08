@@ -3,6 +3,7 @@
 #include <chrono>
 #include "classes.hpp"
 #include "functions.h"
+#include "module6.hpp"
 
 
 void readAndAddCars(Graph& graph, const string& filename) {
@@ -23,9 +24,16 @@ void readAndAddCars(Graph& graph, const string& filename) {
         std::getline(ss, priority);
 
         Stack<char> path;
-        dijkstra(start[0], end[0], path, graph); // calling dijstraks to calculate path
-        Car car(name, start[0], end[0], path, (priority == "High") ? 2 : (priority == "Medium") ? 1 : 0);
-        graph.addCar(car); // inserting all cars
+        if(name[0] == 'E')
+            AStar(start[0],end[0],path,graph);
+        else
+            dijkstra(start[0], end[0], path, graph); // calling dijstraks to calculate path
+        path.pop();
+        string next_path = "";
+        next_path += start[0];
+        next_path += path.topNode();
+        Car* car = new Car(name, start[0], end[0], path, (priority == "High") ? 2 : (priority == "Medium") ? 1 : 0, graph.get_road_weight(next_path));
+        graph.addCar(next_path,car); // inserting all cars
     }
     file.close();
 
@@ -91,7 +99,8 @@ int main() {
 
     while (!end) {
         ch = getch();
-        switch (ch) {
+        switch (ch)
+        {
         case '1':
             graph.printIntersections(output);
             break;
@@ -109,7 +118,9 @@ int main() {
             break;
 
         case '6':
-            graph.blockRoad(output);
+            string roadName = graph.blockRoad(output);
+            if(roadName != "")
+                block_routes(graph, roadName,output);
             break;
         case '7':
             graph.printCarPaths(output);
@@ -124,6 +135,7 @@ int main() {
         
         if (time_passed.count() >= 1) {
             change_signals_state(time_passed.count(), graph);
+            change_car_state(time_passed.count(), graph);
         }
     }
     delwin(menu);

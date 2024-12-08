@@ -6,7 +6,6 @@
 #define FUNCTIONS_H
 
 #include "classes.hpp"
-#include <fstream>
 #include <iostream>
 
 using namespace std;
@@ -15,6 +14,8 @@ using namespace std;
 void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool shortest);
 void AStar(char start, char goal, Stack<char>& path, Graph& graph);
 void change_signals_state(int count, Graph& matrix);
+void change_direction(Graph& Matrix,Car*& car);
+void change_car_state(int count,Graph& matrix);
 // Dijkstra's Algorithm to find the shortest path from source to target
 
 void change_signals_state(int count ,Graph& matrix)
@@ -23,7 +24,8 @@ void change_signals_state(int count ,Graph& matrix)
     for(int i = 0; i < keys.getSize() ; i++)
     {
         int timeLeft = matrix.greenTime[keys[i]].getSecond().getFirst() - count; // remaining time subtracted by time passed
-        if (timeLeft <= 0) {
+        if (timeLeft <= 0)
+        {
             matrix.greenTime[keys[i]].getFirst() == true ? // check
                 matrix.greenTime[keys[i]].setFirst(false) : // if true
                     matrix.greenTime[keys[i]].setFirst(true); // if false
@@ -32,6 +34,36 @@ void change_signals_state(int count ,Graph& matrix)
         }
         matrix.greenTime[keys[i]].getSecond().setFirst(timeLeft); // setting remaining time
     }
+}
+
+void change_car_state(int count,Graph& matrix)
+{
+    for (LinkedList<Car*>::Node* curr = matrix.cars.getHead(); curr; curr = curr->next)
+    {
+        int new_time = curr->data->getStarting() - count;
+        if(new_time <= 0)
+            change_direction(matrix,curr->data);
+        else
+        {
+            curr->data->setCurrentTime(new_time);
+        }
+    }
+}
+
+void change_direction(Graph& matrix,Car*& car)
+{
+    string curr_path = "";
+    curr_path += car->getStarting();
+    curr_path += car->getPath().topNode();
+    if (car->getPriority() == 0 && !matrix.greenTime[curr_path[1]].getFirst())
+        return;
+    matrix.carCount[curr_path].delete_object(car);
+    car->setStarting(car->getPath().pop());
+    curr_path = "";
+    curr_path += car->getStarting();
+    curr_path += car->getPath().topNode();
+    car->setCurrentTime(matrix.get_road_weight(curr_path));
+    matrix.carCount[curr_path].insert(car);
 }
 
 void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool shortest = true)
@@ -119,6 +151,7 @@ void AStar(char start, char goal, Stack<char>& path, Graph& graph) {
     Set<char> visited(n);
     Map<char, int> dist(n);          // g(n) - shortest distance from start
     Map<char, char> predecessor(n);  // To reconstruct the path
+    path.removeAll();
 
     // Initialize all nodes
     for (char i = 'A'; i <= 'Z'; i++) {

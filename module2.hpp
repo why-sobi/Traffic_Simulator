@@ -5,13 +5,13 @@
 #include "classes.hpp"
 #include "functions.h"
 
-void route_recalculation(Car& car, Graph& graph)
+void route_recalculation(Car*& car, Graph& graph)
 {
 	// for least priority call dijkstra to recalculate route else A*
-	if (car.getPriority() == 0)
-		dijkstra(car.getPath().topNode(), car.getEnding(), car.getPath(), graph);
+	if (car->getPriority() == 0)
+		dijkstra(car->getPath().topNode(), car->getEnding(), car->getPath(), graph);
 	else
-		AStar(car.getPath().topNode(), car.getEnding(), car.getPath(), graph);
+		AStar(car->getPath().topNode(), car->getEnding(), car->getPath(), graph);
 }
 
 

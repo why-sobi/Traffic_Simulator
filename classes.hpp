@@ -43,7 +43,6 @@ bool isAlphaChar(std::string str) {
 
 template <typename T1, typename T2>
 class Pair {
-private:
     T1 first;
     T2 second;
 
@@ -77,6 +76,187 @@ public:
     {
         out << "(" << obj.first << ", " << obj.second << ")" << endl;
         return out;
+    }
+};
+
+template <typename T>
+class Heap
+{
+protected:
+    T* heap;
+    int capacity;
+    int size;
+
+    virtual void heapify_down() {}
+    virtual void heapify_up() {}
+
+public:
+    Heap(int cap) : capacity(cap)
+    {
+        size = 0;
+        this->heap = new T[capacity];
+    }
+    virtual ~Heap()
+    {
+        if (heap)
+        {
+            delete[] heap;
+        }
+        heap = nullptr;
+    }
+
+    // Methods
+    virtual void insert(T& value)
+    {
+        if (this->size == capacity)
+        {
+            capacity *= 2;
+            T* temp = new T[capacity];
+            for (int i = 0; i < this->size; i++)
+            {
+                temp[i] = heap[i];
+            }
+            delete[] heap;
+            heap = temp;
+        }
+        heap[this->size++] = value;
+        heapify_up();
+        return;
+    }
+    virtual T pop()
+    {
+        T val = heap[0];
+        heap[0] = heap[--this->size];
+
+        heapify_down();
+        return val;
+    }
+    virtual T peek() { return heap[0]; }
+    virtual bool isEmpty() { return this->size == 0; }
+    virtual int getSize() const { return this->size; }
+    void print()
+    {
+        for (int i = 0; i < this->size; i++)
+            std::cout << heap[i] << ' ';
+        std::cout << '\n';
+    }
+};
+
+template <typename T>
+class MinHeap : public Heap<T>
+{
+public:
+    MinHeap() : Heap<T>(5){}
+    MinHeap(int cap) : Heap<T>(cap){}
+    void heapify_down()
+    {
+        int i = 0;
+        while (i < this->size)
+        {
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            int largest = i;
+
+            // only one child can be larger since it is heapified after each node insertion and deletion
+            if (left < this->size && this->heap[left] < this->heap[largest])
+                largest = left;
+            if (right < this->size && this->heap[right] < this->heap[largest])
+                largest = right;
+
+            if (largest != i)
+            {
+                std::swap(this->heap[i], this->heap[largest]);
+            }
+            i++;
+        }
+    }
+
+    void heapify_up()
+    {
+        int i = this->size - 1;
+        while (i >= 0)
+        {
+            // calculation of parent
+            int parent = (i - 1) / 2;
+            if (this->heap[parent] > this->heap[i])
+            {
+                std::swap(this->heap[parent], this->heap[i]);
+            }
+            if (i == 0)
+                break;
+            i = parent;
+        }
+    }
+
+    void heapifySort(T arr[], int n)
+    {
+        MinHeap<T> temp(n);
+        for (int i = 0; i < this->size; i++)
+            temp.insert(arr[i]);
+        for (int i = 0; i < this->size; i++)
+            arr[i] = temp.pop();
+    }
+};
+
+template <typename T>
+class MaxHeap : public Heap<T>
+{
+    public:
+    MaxHeap() : Heap<T>(5){}
+    MaxHeap(int cap) : Heap<T>(cap){}
+    void heapify_down()
+    {
+        int i = 0;
+        while (i < this->size)
+        {
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            int largest = i;
+
+            // only one child can be larger since it is heapified after each node insertion and deletion
+            if (left<this->size && this->heap[left]> this->heap[largest])
+                largest = left;
+            if (right<this->size && this->heap[right]> this->heap[largest])
+                largest = right;
+            if (largest != i)
+            {
+                std::swap(this->heap[i], this->heap[largest]);
+            }
+            i++;
+        }
+    }
+    void heapify_up()
+    {
+        int i = this->size - 1;
+        while (i >= 0)
+        {
+            // calculation of parent
+            int parent = (i - 1) / 2;
+            if (this->heap[parent] < this->heap[i])
+            {
+                std::swap(this->heap[parent], this->heap[i]);
+            }
+            if (i == 0)
+                break;
+            i = parent;
+        }
+    }
+    void delete_object(T& car)
+    {
+        int deleteIndex = -1;
+        for(int i = 0; i < this->size; i++)
+        {
+            if (this->heap[i] == car)
+            {
+                deleteIndex = i;
+                break;
+            }
+        }
+        if(deleteIndex != -1)
+            return;
+        this->heap[deleteIndex] = this->heap[this->size - 1];
+        --this->size;
+        heapify_down();
     }
 };
 
@@ -181,7 +361,7 @@ class Stack
     StackNode<T>* top;
 
 public:
-    Stack() : top(NULL) {}
+    Stack() : top(nullptr) {}
     ~Stack()
     {
         removeAll();
@@ -616,6 +796,15 @@ public:
         }
     }
 
+    void delete_objects()
+    {
+        for(Node* curr = head; curr; curr = curr->next)
+        {
+            delete curr->data;
+            curr->data = nullptr;
+        }
+    }
+
     bool isEmpty() const
     {
 
@@ -660,11 +849,12 @@ class Car
     std::string plate;
     int priority;
     char starting, ending;
+    int current_time;
     Stack<char> path;
 
 public:
     Car(int P = 0) : priority(P) {}
-    Car(std::string Plate, char Start, char End, Stack<char>& Path, int P = 0) : plate(std::move(Plate)), starting(Start), ending(End), priority(P) {
+    Car(std::string Plate, char Start, char End, Stack<char>& Path, int P = 0, int ct = 0) : plate(std::move(Plate)), priority(P), starting(Start), ending(End), current_time(ct) {
         Path.moveOwnershipTo(path);
     }
     Car(Car& obj) {
@@ -675,10 +865,10 @@ public:
     // Getters
     int getPriority() const { return priority; }
     char getStarting() const { return starting; }
+    void setStarting(char s) { starting = s; }
     char getEnding() const { return ending; }
     std::string getPlate() const { return plate; }
     Stack<char>& getPath() { return path; }
-
     // Setters
     void setPlate(const std::string& Plate) { plate = Plate; }
 
@@ -695,7 +885,16 @@ public:
 
     bool operator==(const Car& obj) const
     {
-        return this->priority == obj.priority;
+        return this->plate == obj.plate;
+    }
+
+    int getCurrentTime()
+    {
+        return current_time;
+    }
+    void setCurrentTime(int t)
+    {
+        current_time = t;
     }
 
     // Util Functions
@@ -816,6 +1015,7 @@ public:
 template <typename T, typename M>
 class Map
 {
+public:
     T *key;
     M *value;
     int size;
@@ -963,7 +1163,7 @@ struct GraphNode
     int backup_value;
     std::string status;
 
-    GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time), heuristic_value(INT_MAX), status("Clear"), backup_value(0)
+    GraphNode(char target = '\0', int time = INT_MAX) : targetIntersection(target), travelTime(time), heuristic_value(INT_MAX), backup_value(0), status("Clear")
     {}
 
     friend ostream& operator << (ostream& out, GraphNode& obj)
@@ -999,12 +1199,11 @@ struct GraphNode
 // Graph Class to manage intersections and roads
 class Graph
 {
-    Map<string,int> carCount;
     /*Map<char,string> intersection_coordinates;*/
 public:
-
-    Map<char, Pair<bool, Pair<int, int>>> greenTime; 
-    LinkedList<Car> cars;
+    Map<string,MaxHeap<Car*>> carCount;
+    Map<char, Pair<bool, Pair<int, int>>> greenTime;
+    LinkedList<Car*> cars;
     LinkedList<GraphNode> adjacencyList[vertices];
     int vertexCount;
 
@@ -1025,13 +1224,14 @@ public:
         std::string roadName = "";
         roadName += from;
         roadName += to;
-        carCount.insert(roadName,0);
-        
+
         GraphNode newNode(to, travelTime);
         adjacencyList[fromIndex].insertAtStart(newNode);
     }
-    void addCar(Car& car) {
-        cars.insertAtEnd(car);
+    void addCar(string& roadName,Car*& car)
+    {
+        cars.insertAtStart(car);
+        carCount[roadName].insert(car);
     }
 
     void displayGraph()
@@ -1044,6 +1244,31 @@ public:
         }
     }
 
+    void print_path_and_weight()
+    {
+        for (LinkedList<Car*>::Node* temp = cars.getHead(); temp; temp = temp->next)
+        {
+            int weight = get_weight_of_path(temp->data->getPath().getTop());
+            cout << weight << " ";
+            cout << temp->data->getPath().getTop() << endl;
+        }
+    }
+
+    int get_weight_of_path(StackNode<char>* path)
+    {
+        string roadName = "";
+        StackNode<char>* temp = path;
+        roadName += temp->data;
+        temp = temp->next;
+        int weight = 0;
+        for(; temp; temp = temp->next)
+        {
+            roadName += temp->data;
+            weight += get_road_weight(roadName);
+            roadName = roadName[0];
+        }
+        return weight;
+    }
     // Load graph from a CSV file
     void loadFromCSV(const string &filename)
     {
@@ -1172,7 +1397,7 @@ public:
         q.enqueue(source);
         bool done = false;
 
-        while (!q.isEmpty() || !done)
+        while (!q.isEmpty() && !done)
         {
             char ch = q.peek();
             q.dequeue();
@@ -1182,7 +1407,7 @@ public:
 
             for (LinkedList<GraphNode>::Node* curr = adjacencyList[childrenListIndex].getHead(); curr && !done; curr = curr->next) {
                 char currentChar = curr->data.targetIntersection;
-                map.insert(currentChar, ch); // to keep track of papa beta relationship 
+                map.insert(currentChar, ch); // to keep track of papa beta relationship
 
                 if (currentChar == goal) { // found goal node
                     done = true;
@@ -1215,7 +1440,7 @@ public:
     }*/
     int get_Car_count(string& roadName)
     {
-        return carCount[roadName];
+        return carCount[roadName].getSize();
     }
     void setRoadSituation(std::string roadName, std::string status) {
         LinkedList<GraphNode>::Node* found = adjacencyList[roadName[0] - 'A'].findNode(roadName[1]);
@@ -1224,11 +1449,12 @@ public:
         }
     }
     std::string getRoadSituation(std::string roadName) {
-        LinkedList<GraphNode>::Node* found = adjacencyList[roadName[0] - 'A'].findNode(roadName[1]);
+        LinkedList<GraphNode>::Node* found = adjacencyList[roadName[0] - 'A'].findNode(roadName[1]);        // getting the Graph node B from road A to B
         if (found == nullptr) return "None";
         return found->data.status;
     }
-    void blockRoad(WINDOW*& output) {
+
+    std::string blockRoad(WINDOW*& output) {
         wclear(output);
         box(output, 0, 0);
 
@@ -1249,17 +1475,15 @@ public:
         if (roadName.length() != 2 || !isAlphaChar(roadName)) {
             mvwprintw(output, 2, 1, "Road doesn't exist!");
             wrefresh(output);
-            return;
+            return "";
         }
+        return roadName;
+    }
 
+    int get_road_weight(std::string roadName)
+    {
         LinkedList<GraphNode>::Node* found = adjacencyList[roadName[0] - 'A'].findNode(roadName[1]);
-        if (found) {
-            found->data.status = "Blocked";
-            printRoadStatus(output);
-        }
-
-        return;
-
+        return found->data.travelTime;
     }
 
     // printing functions
@@ -1285,9 +1509,9 @@ public:
 
         int row = 1;
         int col = 1;
-        
-        for (LinkedList<Car>::Node* curr = cars.getHead(); curr; curr = curr->next) {
-            curr->data.printPath(path_win, col, row);
+
+        for (LinkedList<Car*>::Node* curr = cars.getHead(); curr; curr = curr->next) {
+            curr->data->printPath(path_win, col, row);
             col += 26;
             if (col > 100) {
                 col = 1;
@@ -1319,7 +1543,7 @@ public:
         int row = 1, col = 1;
         DynamicArr<std::string> keys = carCount.getKeys();
         for (int i = 0; i < keys.getSize(); i++) {
-            std::string vNumber = std::to_string(carCount[keys[i]]);
+            std::string vNumber = std::to_string(carCount[keys[i]].getSize());
             mvwprintw(output, row, col, "Road %s has %s Vehicles!", keys[i].c_str(), vNumber.c_str());
             col += 40;
             if (col > 121) {
@@ -1352,185 +1576,11 @@ public:
         wrefresh(output);
     }
 
-};
-
-template <typename T>
-class Heap
-{
-protected:
-    T* heap;
-    int capacity;
-    int size;
-
-    virtual void heapify_down() {}
-    virtual void heapify_up() {}
-
-public:
-    Heap(int cap) : capacity(cap)
+    ~Graph()
     {
-        size = 0;
-        this->heap = new T[capacity];
-    }
-    virtual ~Heap()
-    {
-        if (heap)
-        {
-            delete[] heap;
-        }
-        heap = nullptr;
-    }
-
-    // Methods
-    virtual void insert(T& value)
-    {
-        if (this->size == capacity)
-        {
-            capacity *= 2;
-            T* temp = new T[capacity];
-            for (int i = 0; i < this->size; i++)
-            {
-                temp[i] = heap[i];
-            }
-            delete[] heap;
-            heap = temp;
-        }
-        heap[this->size++] = value;
-        heapify_up();
-        return;
-    }
-    virtual T pop()
-    {
-        T val = heap[0];
-        heap[0] = heap[--this->size];
-
-        heapify_down();
-        return val;
-    }
-    virtual T peek() { return heap[0]; }
-    virtual bool isEmpty() { return this->size == 0; }
-    virtual int getSize() const { return this->size; }
-    void print()
-    {
-        for (int i = 0; i < this->size; i++)
-            std::cout << heap[i] << ' ';
-        std::cout << '\n';
+        cars.delete_objects();
     }
 };
 
-template <typename T>
-class MinHeap : public Heap<T>
-{
-public:
-    MinHeap(int cap) : Heap<T>(cap){}
-    void heapify_down()
-    {
-        int i = 0;
-        while (i < this->size)
-        {
-            int left = 2 * i + 1;
-            int right = 2 * i + 2;
-            int largest = i;
-
-            // only one child can be larger since it is heapified after each node insertion and deletion
-            if (left < this->size && this->heap[left] < this->heap[largest])
-                largest = left;
-            if (right < this->size && this->heap[right] < this->heap[largest])
-                largest = right;
-
-            if (largest != i)
-            {
-                std::swap(this->heap[i], this->heap[largest]);
-            }
-            i++;
-        }
-    }
-
-    void heapify_up()
-    {
-        int i = this->size - 1;
-        while (i >= 0)
-        {
-            // calculation of parent
-            int parent = (i - 1) / 2;
-            if (this->heap[parent] > this->heap[i])
-            {
-                std::swap(this->heap[parent], this->heap[i]);
-            }
-            if (i == 0)
-                break;
-            i = parent;
-        }
-    }
-
-    void heapifySort(T arr[], int n)
-    {
-        MinHeap<T> temp(n);
-        for (int i = 0; i < this->size; i++)
-            temp.insert(arr[i]);
-        for (int i = 0; i < this->size; i++)
-            arr[i] = temp.pop();
-    }
-};
-
-template <typename T>
-class MaxHeap : public Heap<T>
-{
-    void heapify_down()
-    {
-        int i = 0;
-        while (i < this->size)
-        {
-            int left = 2 * i + 1;
-            int right = 2 * i + 2;
-            int largest = i;
-
-            // only one child can be larger since it is heapified after each node insertion and deletion
-            if (left<this->size && this->heap[left]> this->heap[largest])
-                largest = left;
-            if (right<this->size && this->heap[right]> this->heap[largest])
-                largest = right;
-            if (largest != i)
-            {
-                std::swap(this->heap[i], this->heap[largest]);
-            }
-            i++;
-        }
-    }
-    void heapify_up()
-    {
-        int i = this->size - 1;
-        while (i >= 0)
-        {
-            // calculation of parent
-            int parent = (i - 1) / 2;
-            if (this->heap[parent] < this->heap[i])
-            {
-                std::swap(this->heap[parent], this->heap[i]);
-            }
-            if (i == 0)
-                break;
-            i = parent;
-        }
-    }
-
-    int getTopK(int k)
-    {
-        MaxHeap<T> temp(k);
-        for (int i = 0; i < k; i++)
-        {
-            temp.insert(this->heap[i]);
-        }
-        return temp.peek();
-    }
-
-    void heapSort(T arr[], int n)
-    {
-        MaxHeap<T> temp(n);
-        for (int i = 0; i < this->size; i++)
-            temp.insert(arr[i]);
-        for (int i = this->size - 1; i >= 0; i--)
-            arr[i] = temp.pop();
-    }
-};
 
 #endif //CLASSES_HPP
