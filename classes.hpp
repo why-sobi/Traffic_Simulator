@@ -961,7 +961,6 @@ struct GraphNode
     int travelTime; // weight
     int heuristic_value;
     int backup_value;
-    bool
     std::string status;
 
 
@@ -1141,49 +1140,23 @@ public:
         }
         file.close();
     }
-    
 
-    // Graph setup functions
-    void initialize_coordinates()
-    {
-        for(char a = 'A'; a <= 'Z'; a++)
-        {
-            intersection_coordinates.insert(a," ");
-        }
-    }
-    void set_coordinates_of_intersection()
-    {
-        initialize_coordinates();
-        intersection_coordinates['A']= "0,0";
-        // Iterate through edges and calculate coordinates
-        for (int i = 0; i < vertexCount; i++)
-        {
-            for (LinkedList<GraphNode>::Node* temp = adjacencyList[i].getHead(); temp; temp = temp->next)
-            {
-                char start = i + 'A';
-                char end = temp->data.targetIntersection;
-                int weight = temp->data.travelTime;
-                if(intersection_coordinates[start] != "")
-                {
-                    Pair<int,int> p = get_coordinates(start);
-                    intersection_coordinates[end] = to_string(p.getFirst() + weight) +","+ to_string(p.getSecond());
-                }
-                else if(intersection_coordinates[end] != "")
-                {
-                    Pair<int, int> p = get_coordinates(end);
-                    intersection_coordinates[start] = to_string(p.getFirst() - weight) +","+ to_string(p.getSecond());
-                }
-            }
-        }
-        intersection_coordinates.print();
-    }
     int heuristic(char start, char goal)
     {
-        Pair<int, int> startCoords = get_coordinates(start);
-        Pair<int, int> goalCoords = get_coordinates(goal);
-        int d1 = startCoords.getFirst() - goalCoords.getFirst();
-        int d2 = startCoords.getSecond() - goalCoords.getSecond();
-        return sqrt(d1 * d1 + d2 * d2);
+        // Pair<int, int> startCoords = get_coordinates(start);
+        // Pair<int, int> goalCoords = get_coordinates(goal);
+        // int d1 = startCoords.getFirst() - goalCoords.getFirst();
+        // int d2 = startCoords.getSecond() - goalCoords.getSecond();
+        // return sqrt(d1 * d1 + d2 * d2);
+        Stack<char> path;
+        BFSpathFinding(start, goal,path);
+        int length = -1;
+        while(!path.isEmpty())
+        {
+            path.pop();
+            length++;
+        }
+        return length;
     }
 
     // Algos

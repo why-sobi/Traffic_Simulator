@@ -24,17 +24,19 @@ void AStar(Graph& graph, char start, char goal, Stack<char>& path);
 void change_signals_state();
 // Dijkstra's Algorithm to find the shortest path from source to target
 
-void change_signals_state(int count,Graph& matrix) {
+void change_signals_state(int count,Graph& matrix)
+{
     // Set up a timer to call this function again after 5 seconds (non-blocking)
 
-    // usage: call this function when the simulation process starts with main program thread t(change_signals_state, graph)
+    // usage: call this function when the simulation process starts with main program thread t(change_signals_state,0, graph)
+
     auto future = async(launch::async, [](){
-        this_thread::sleep_for(seconds(5));
+        this_thread::sleep_for(seconds(1));
     });
 
     // Wait for the timer to complete, then call the function again (recursive call)
     future.wait(); // Wait for 5 seconds, then continue the loop
-    count += 5;
+    count += 1;
     DynamicArr<char> keys = matrix.greenTime.getKeys();
     for(int i = 0; i < keys.getSize() ; i++)
     {

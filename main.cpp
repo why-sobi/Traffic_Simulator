@@ -73,11 +73,11 @@ int main() {
     // Create three windows with recommended sizes
     WINDOW* menu = newwin(10, 150, 0, 0);      // Window for Menu
     WINDOW* output = newwin(28, 150, 10, 0);   // window for output
-    // if (menu == nullptr)
-    // {
-    //     std::cerr << "Error creating menu window!" << std::endl;
-    //     exit(1);  // Exit or handle gracefully
-    // }
+    if (menu == nullptr)
+    {
+        std::cerr << "Error creating menu window!" << std::endl;
+        exit(1);  // Exit or handle gracefully
+    }
     box(menu, 0, 0);
     box(output, 0, 0);
 
