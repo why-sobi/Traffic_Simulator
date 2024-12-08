@@ -104,7 +104,6 @@ public:
         }
         heap = nullptr;
     }
-
     // Methods
     virtual void insert(T& value)
     {
@@ -1051,14 +1050,12 @@ public:
     }
     int hashFunction(char ch) { return (int(ch) * 7) % size; }
     int linearProbe(int index) { return (index + 1) % size; }
-
 public:
-    Map(int s)
+    Map(int s,bool cars = true)
     {
         size = getNextPrime(s);
         key = new T[size];
         value = new M[size];
-
         setDefault(key);
     }
     ~Map()
@@ -1119,7 +1116,10 @@ public:
     M &operator[](T key_val)
     {
         if(!find(key_val))
-            throw std::runtime_error("Invalid KEY!\n");
+        {
+            key[hashFunction(key_val)] = key_val;
+            return value[hashFunction(key_val)];
+        }
         int start = hashFunction(key_val);
         if (checkDefault(key[start]))
             throw std::runtime_error("Invalid KEY!\n");
@@ -1231,6 +1231,8 @@ public:
     void addCar(string& roadName,Car*& car)
     {
         cars.insertAtStart(car);
+        // if(!carCount.find(roadName))
+        //     carCount.insert(roadName, MaxHeap<Car*>());
         carCount[roadName].insert(car);
     }
 

@@ -3,9 +3,6 @@
 #include <chrono>
 #include "classes.hpp"
 #include "functions.h"
-#include "module2.hpp"
-#include "module4.hpp"
-#include "module5.hpp"
 #include "module6.hpp"
 
 
@@ -31,12 +28,17 @@ void readAndAddCars(Graph& graph, const string& filename) {
             AStar(start[0],end[0],path,graph);
         else
             dijkstra(start[0], end[0], path, graph); // calling dijstraks to calculate path
-        path.pop();
+        if(!path.isEmpty())
+            path.pop();
         string next_path = "";
         next_path += start[0];
-        next_path += path.topNode();
-        Car* car = new Car(name, start[0], end[0], path, (priority == "High") ? 2 : (priority == "Medium") ? 1 : 0, graph.get_road_weight(next_path));
-        graph.addCar(next_path,car); // inserting all cars
+        if(!path.isEmpty())
+            next_path += path.topNode();
+        if(next_path.length() == 2)
+        {
+            Car* car = new Car(name, start[0], end[0], path, (priority == "High") ? 2 : (priority == "Medium") ? 1 : 0, graph.get_road_weight(next_path));
+            graph.addCar(next_path,car); // inserting all cars
+        }
     }
     file.close();
 

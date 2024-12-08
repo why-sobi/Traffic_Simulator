@@ -70,7 +70,7 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
 {
     const int n = vertices;
 
-    MinHeap<GraphNode> pq(n); // Priority queue for Dijkstra
+    MinHeap<GraphNode> pq(vertices); // Priority queue for Dijkstra
     Set<char> visited(n);
     Map<char,int> dist(n);
     Map<char,char> predecessor(EDGES); // Map to track predecessors
@@ -143,7 +143,7 @@ void dijkstra(char source, char target, Stack<char>& path, Graph& graph, bool sh
 
 void AStar(char start, char goal, Stack<char>& path, Graph& graph) {
     const int n = vertices;
-
+    bool found = false;
     // MinHeap to store nodes based on f value (g + h)
     MinHeap<GraphNode> pq(n);
 
@@ -172,8 +172,11 @@ void AStar(char start, char goal, Stack<char>& path, Graph& graph) {
 
         visited.insert(u);  // Mark as visited
 
-        if (u == goal) break;  // If we reach the goal, stop
-
+        if (u == goal)
+        {
+            found = true;
+            break;  // If we reach the goal, stop
+        }
         // Process all neighbors of u
         for (LinkedList<GraphNode>::Node* temp = graph.adjacencyList[u - 'A'].getHead(); temp; temp = temp->next) {
             char v = temp->data.targetIntersection;  // Neighbor node
@@ -195,7 +198,8 @@ void AStar(char start, char goal, Stack<char>& path, Graph& graph) {
             }
         }
     }
-
+    if(!found)
+        return;
     // Reconstruct the path from goal to start using predecessors
     char current = goal;
     while (current != start) {
