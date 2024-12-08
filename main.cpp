@@ -3,6 +3,9 @@
 #include <chrono>
 #include "classes.hpp"
 #include "functions.h"
+#include "module2.hpp"
+#include "module4.hpp"
+#include "module5.hpp"
 #include "module6.hpp"
 
 
@@ -118,10 +121,12 @@ int main() {
             break;
 
         case '6':
+        {
             string roadName = graph.blockRoad(output);
-            if(roadName != "")
-                block_routes(graph, roadName,output);
+            if (roadName != "")
+                block_routes(graph, roadName, output);
             break;
+        }
         case '7':
             graph.printCarPaths(output);
             break;

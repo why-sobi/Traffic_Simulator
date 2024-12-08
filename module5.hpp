@@ -13,7 +13,7 @@ void Emergency_handling(Graph& matrix, Car& emergency_car)
     char goal = emergency_car.getEnding(), source = emergency_car.getStarting(); // returns the starting and ending point of a car
 
     path.removeAll(); // empties the stack
-    AStar(matrix,source, goal, path);
+    AStar(source, goal, path, matrix);
 
     // After this the path of the emergency vehicle is set now it just have to follow that, based on the priority it
     // will move through the roads
